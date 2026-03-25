@@ -1,15 +1,13 @@
 {% extends "base.html" %}
-{% set active = "implications" %}
+{% set active = "responsible-ai" %}
 
-{% block title %}AtlasED — Implications{% endblock %}
+{% block title %}AtlasED — Responsible AI Use{% endblock %}
 
 {% block body %}
-<div class="page-label">Future Vision</div>
-<h1 class="page-title">From Demonstration to Methodology</h1>
+<h1 class="page-title">Responsible AI Use</h1>
 <p class="page-desc">
-    This dashboard demonstrates specification sensitivity in one pipeline. The goal is to extend this
-    approach into a formal tool that can be used in every pipeline, every domain, every high-stakes
-    decision system.
+    This dashboard demonstrates specification sensitivity in one pipeline. The principle applies
+    to every domain where AI shapes decisions.
 </p>
 
 <h2 class="section-title">The Vision: SpecCheck as a Standard</h2>
@@ -88,35 +86,10 @@
     what would change if the choices were different."
 </div>
 
-<h2 class="section-title">Data & Methods</h2>
-<div class="card">
-    <div class="card-title">Technical Specification</div>
-    <div class="card-body">
-        <p><strong>Period:</strong> January 2023 – September 2025</p>
-        <p><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</p>
-        <p><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</p>
-        <p><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</p>
-        <p><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</p>
-        <p><strong>Election split:</strong> 2024-07-04 (UK General Election)</p>
+<a href="/next-steps" style="text-decoration:none;display:block;">
+    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
+        <span class="callout-label">What's Next &rarr;</span>
+        See the technical details and future roadmap.
     </div>
-</div>
-
-<h2 class="section-title">Next Steps</h2>
-<div class="card">
-    <div class="card-title">From Demonstration to Deployment</div>
-    <div class="card-body">
-        <p>
-            <strong>Immediate:</strong> Use this dashboard in stakeholder workshops to demonstrate the principle.
-            Gather feedback from policymakers, engineers, and affected communities.
-        </p>
-        <p>
-            <strong>Short-term:</strong> Develop the SpecCheck library with three core metrics: specification
-            reproducibility, finding stability, and disclosure completeness.
-        </p>
-        <p>
-            <strong>Long-term:</strong> Establish SpecCheck as a standard practice in high-stakes AI deployment —
-            alongside fairness testing, adversarial robustness, and interpretability.
-        </p>
-    </div>
-</div>
+</a>
 {% endblock %}

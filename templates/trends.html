@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% set active = "trends" %}
+
+{% block title %}AtlasED — Explore Trends{% endblock %}
+
+{% block body %}
+<h1 class="page-title">Explore Trends</h1>
+<p class="page-desc">
+    See how topics change over time. Select specific topics or view the top 10 together.
+</p>
+
+<div class="topics-layout">
+    <div class="topics-sidebar">
+        <div class="filter-section">
+            <div class="filter-label">Topics</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
+                <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
+            </div>
+        </div>
+        <div class="filter-section" id="topicPicker" style="display:none;">
+            <div class="filter-label">Select Topics</div>
+            <div class="topic-checkboxes">
+                {% for t in topics %}
+                <label class="topic-checkbox">
+                    <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
+                    {{ t.name | replace("_", " ") | title }}
+                </label>
+                {% endfor %}
+            </div>
+            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update Chart</button>
+        </div>
+    </div>
+    <div class="topics-chart">
+        <p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;">
+            <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
+        </p>
+        <h3 class="chart-title">Selected Topics Over Time</h3>
+        <canvas id="chart-trends"></canvas>
+    </div>
+</div>
+
+<a href="/sensitivity" style="text-decoration:none;display:block;">
+    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
+        <span class="callout-label">What's Next &rarr;</span>
+        These are meaningful results for understanding education policy. But how much depends on
+        the choices made to get here? Explore what changes when the model changes.
+    </div>
+</a>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.topics-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.topics-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-right: 1px solid var(--border);
+    padding-right: 1.5rem;
+}
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+.filter-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.filter-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.filter-btn:hover { background: var(--bg); color: var(--text-primary); }
+.filter-btn.active { background: var(--ocean); color: white; border-color: var(--ocean); }
+.topics-chart { min-height: 0; }
+.topics-chart canvas { max-height: 400px; }
+.topic-checkboxes {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.topic-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.2rem 0;
+}
+.topic-checkbox:hover { color: var(--text-primary); }
+.topic-checkbox input { accent-color: var(--ocean); }
+@media (max-width: 768px) {
+    .topics-layout { grid-template-columns: 1fr; }
+    .topics-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .filter-buttons { flex-direction: row; flex-wrap: wrap; }
+}
+</style>
+
+<script>
+const COLORS = [
+    "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
+    "#6366f1","#14b8a6","#f97316","#06b6d4","#84cc16","#e11d48",
+    "#7c3aed","#0ea5e9","#d946ef"
+];
+
+function formatTopicName(name) {
+    return name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+let trendsChart;
+let customMode = false;
+
+function selectAllTopics() {
+    customMode = false;
+    document.getElementById('btnAllTopics').classList.add('active');
+    document.getElementById('btnCustomTopics').classList.remove('active');
+    document.getElementById('topicPicker').style.display = 'none';
+    loadTrends('');
+}
+
+function enableCustomTopics() {
+    customMode = true;
+    document.getElementById('btnCustomTopics').classList.add('active');
+    document.getElementById('btnAllTopics').classList.remove('active');
+    document.getElementById('topicPicker').style.display = 'block';
+}
+
+function updateTrends() {
+    const checked = document.querySelectorAll('.topic-cb:checked');
+    const nums = Array.from(checked).map(cb => parseInt(cb.value));
+    if (nums.length > 0) loadTrends(nums.join(','));
+}
+
+async function loadTrends(topicNums) {
+    const params = new URLSearchParams();
+    if (topicNums) params.set('topic_nums', topicNums);
+
+    const res = await fetch('/api/timeseries?' + params);
+    const data = await res.json();
+
+    // If no topic filter, take top 10 by total count
+    if (!topicNums) {
+        const totals = {};
+        data.forEach(r => { totals[r.topic_name] = (totals[r.topic_name] || 0) + r.article_count; });
+        const top10Names = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0,10).map(e => e[0]);
+        data = data.filter(r => top10Names.includes(r.topic_name));
+    }
+
+    const grouped = {};
+    const allMonths = new Set();
+    data.forEach(r => {
+        const label = `${r.year}-${String(r.month).padStart(2,'0')}`;
+        if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
+        grouped[r.topic_name][label] = (grouped[r.topic_name][label] || 0) + r.article_count;
+        allMonths.add(label);
+    });
+
+    const months = [...allMonths].sort();
+    const electionIdx = months.indexOf('2024-07');
+
+    const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const monthLabels = months.map(m => {
+        const [y, mo] = m.split('-');
+        return `${MONTH_NAMES[parseInt(mo)-1]} ${y}`;
+    });
+
+    const datasets = Object.entries(grouped).map(([name, points], i) => ({
+        label: formatTopicName(name),
+        data: months.map(m => points[m] || 0),
+        borderColor: COLORS[i % COLORS.length],
+        backgroundColor: COLORS[i % COLORS.length] + '18',
+        fill: false,
+        tension: 0.4,
+        pointRadius: 3,
+        borderWidth: 2.5
+    }));
+
+    const ctx = document.getElementById('chart-trends').getContext('2d');
+    if (trendsChart) trendsChart.destroy();
+    trendsChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: monthLabels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Month' },
+                    ticks: {
+                        font: { size: 10 },
+                        maxRotation: 45,
+                        callback: function(val, idx) {
+                            return idx % 3 === 0 ? this.getLabelForValue(val) : '';
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Articles per Month' }
+                }
+            }
+        },
+        plugins: [{
+            id: 'electionLine',
+            afterDraw(chart) {
+                if (electionIdx < 0) return;
+                const xAxis = chart.scales.x;
+                const yAxis = chart.scales.y;
+                const x = xAxis.getPixelForValue(electionIdx);
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = '#DC2626';
+                ctx.lineWidth = 2;
+                ctx.moveTo(x, yAxis.top);
+                ctx.lineTo(x, yAxis.bottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#DC2626';
+                ctx.font = "bold 11px 'DM Sans', sans-serif";
+                ctx.textAlign = 'center';
+                ctx.fillText('Election Jul 2024', x, yAxis.top - 5);
+                ctx.restore();
+            }
+        }]
+    });
+}
+
+loadTrends('');
+</script>
+{% endblock %}

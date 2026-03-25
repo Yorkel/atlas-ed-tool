@@ -1,18 +1,14 @@
 {% extends "base.html" %}
 {% set active = "topics" %}
 
-{% block title %}AtlasED — Topics & Trends{% endblock %}
+{% block title %}AtlasED — Explore Topics{% endblock %}
 
 {% block body %}
-<h1 class="page-title">Topics & Trends Over Time</h1>
+<h1 class="page-title">Explore Topics</h1>
 <p class="page-desc">
-    Our main model surfaced 30 topics across the six organisations included in the data. On this
-    page you can explore the top topics found, how they change over time, and how they vary
-    across organisations.
+    Our main model surfaced 30 topics across the six organisations included in the data.
+    Filter by time period or organisation type to see how the top topics shift.
 </p>
-
-<!-- Section 1: Top Topics -->
-<h2 class="section-title">Top Ten Topics</h2>
 
 <div class="topics-layout">
     <div class="topics-sidebar">
@@ -41,47 +37,12 @@
     </div>
 </div>
 
-
-<!-- Section 2: Trends -->
-<h2 class="section-title">Topic Trends Over Time</h2>
-
-<div class="topics-layout">
-    <div class="topics-sidebar">
-        <div class="filter-section">
-            <div class="filter-label">Topics</div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
-                <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
-            </div>
-        </div>
-        <div class="filter-section" id="topicPicker" style="display:none;">
-            <div class="filter-label">Select Topics</div>
-            <div class="topic-checkboxes">
-                {% for t in topics %}
-                <label class="topic-checkbox">
-                    <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
-                    {{ t.name | replace("_", " ") | title }}
-                </label>
-                {% endfor %}
-            </div>
-            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update Chart</button>
-        </div>
+<a href="/trends" style="text-decoration:none;display:block;">
+    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
+        <span class="callout-label">What's Next &rarr;</span>
+        See how these topics change over time on the Trends page.
     </div>
-    <div class="topics-chart">
-        <p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;">
-            <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
-        </p>
-        <h3 class="chart-title">Selected Topics Over Time</h3>
-        <canvas id="chart-trends"></canvas>
-    </div>
-</div>
-
-<div class="callout callout-info" style="margin-top:2rem;">
-    <span class="callout-label">What's Next</span>
-    These are meaningful results for understanding education policy. But the question is: how much of this
-    depends on the choices made to get here? On the next page explore what changes when the choices behind
-    the model change.
-</div>
+</a>
 {% endblock %}
 
 {% block scripts %}
@@ -96,7 +57,6 @@
     border-radius: 8px;
     padding: 1.5rem;
 }
-
 .topics-sidebar {
     display: flex;
     flex-direction: column;
@@ -104,9 +64,7 @@
     border-right: 1px solid var(--border);
     padding-right: 1.5rem;
 }
-
 .filter-section {}
-
 .filter-label {
     font-size: 0.7rem;
     font-weight: 700;
@@ -115,13 +73,11 @@
     color: var(--text-muted);
     margin-bottom: 0.5rem;
 }
-
 .filter-buttons {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
 }
-
 .filter-btn {
     padding: 0.4rem 0.75rem;
     font-size: 0.8rem;
@@ -135,56 +91,19 @@
     font-family: inherit;
     transition: all 0.15s;
 }
-
 .filter-btn:hover {
     background: var(--bg);
     color: var(--text-primary);
 }
-
 .filter-btn.active {
     background: var(--ocean);
     color: white;
     border-color: var(--ocean);
 }
-
-.topics-chart {
-    min-height: 0;
-}
-
-.topics-chart canvas {
-    max-height: 350px;
-}
-
-.topic-checkboxes {
-    max-height: 300px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.topic-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 0.2rem 0;
-}
-
-.topic-checkbox:hover {
-    color: var(--text-primary);
-}
-
-.topic-checkbox input {
-    accent-color: var(--ocean);
-}
-
+.topics-chart { min-height: 0; }
+.topics-chart canvas { max-height: 350px; }
 @media (max-width: 768px) {
-    .topics-layout {
-        grid-template-columns: 1fr;
-    }
+    .topics-layout { grid-template-columns: 1fr; }
     .topics-sidebar {
         border-right: none;
         border-bottom: 1px solid var(--border);
@@ -193,10 +112,7 @@
         flex-direction: row;
         flex-wrap: wrap;
     }
-    .filter-buttons {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+    .filter-buttons { flex-direction: row; flex-wrap: wrap; }
 }
 </style>
 
@@ -213,11 +129,8 @@ function formatTopicName(name) {
 
 let currentYear = '';
 let currentType = '';
-let barChart, trendsChart;
-let currentTopTopicNums = [];
-let customMode = false;
+let barChart;
 
-// ── Filter handling ──────────────────────────────────────────────────
 function setYear(y, btn) {
     currentYear = y;
     document.querySelectorAll('[data-group="year"]').forEach(b => b.classList.remove('active'));
@@ -232,7 +145,6 @@ function setType(t, btn) {
     loadTopTopics();
 }
 
-// ── Bar chart ────────────────────────────────────────────────────────
 async function loadTopTopics() {
     const params = new URLSearchParams();
     if (currentYear) params.set('year', currentYear);
@@ -244,8 +156,6 @@ async function loadTopTopics() {
     const yearLabel = currentYear || 'All Years';
     const typeLabel = currentType || 'All Sources';
     document.getElementById('barTitle').textContent = `${typeLabel}, ${yearLabel}`;
-
-    currentTopTopicNums = data.map(d => d.topic_num);
 
     const ctx = document.getElementById('chart-bar').getContext('2d');
     if (barChart) barChart.destroy();
@@ -279,127 +189,8 @@ async function loadTopTopics() {
             }
         }
     });
-
-    if (!customMode) {
-        loadTrends(currentTopTopicNums);
-    }
 }
 
-// ── Trends chart ─────────────────────────────────────────────────────
-function selectAllTopics() {
-    customMode = false;
-    document.getElementById('btnAllTopics').classList.add('active');
-    document.getElementById('btnCustomTopics').classList.remove('active');
-    document.getElementById('topicPicker').style.display = 'none';
-    loadTrends(currentTopTopicNums);
-}
-
-function enableCustomTopics() {
-    customMode = true;
-    document.getElementById('btnCustomTopics').classList.add('active');
-    document.getElementById('btnAllTopics').classList.remove('active');
-    document.getElementById('topicPicker').style.display = 'block';
-}
-
-function updateTrends() {
-    const checked = document.querySelectorAll('.topic-cb:checked');
-    const nums = Array.from(checked).map(cb => parseInt(cb.value));
-    if (nums.length > 0) loadTrends(nums);
-}
-
-async function loadTrends(topicNums) {
-    const params = new URLSearchParams();
-    if (topicNums && topicNums.length) params.set('topic_nums', topicNums.join(','));
-
-    const res = await fetch('/api/timeseries?' + params);
-    const data = await res.json();
-
-    // Group by month
-    const grouped = {};
-    const allMonths = new Set();
-    data.forEach(r => {
-        const label = `${r.year}-${String(r.month).padStart(2,'0')}`;
-        if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
-        grouped[r.topic_name][label] = (grouped[r.topic_name][label] || 0) + r.article_count;
-        allMonths.add(label);
-    });
-
-    const months = [...allMonths].sort();
-    const electionIdx = months.indexOf('2024-07');
-
-    const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const monthLabels = months.map(m => {
-        const [y, mo] = m.split('-');
-        return `${MONTH_NAMES[parseInt(mo)-1]} ${y}`;
-    });
-
-    const datasets = Object.entries(grouped).map(([name, points], i) => ({
-        label: formatTopicName(name),
-        data: months.map(m => points[m] || 0),
-        borderColor: COLORS[i % COLORS.length],
-        backgroundColor: COLORS[i % COLORS.length] + '18',
-        fill: false,
-        tension: 0.4,
-        pointRadius: 3,
-        borderWidth: 2.5
-    }));
-
-    const ctx = document.getElementById('chart-trends').getContext('2d');
-    if (trendsChart) trendsChart.destroy();
-    trendsChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: monthLabels, datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
-            },
-            scales: {
-                x: {
-                    title: { display: true, text: 'Month' },
-                    ticks: {
-                        font: { size: 10 },
-                        maxRotation: 45,
-                        callback: function(val, idx) {
-                            return idx % 3 === 0 ? this.getLabelForValue(val) : '';
-                        }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: { display: true, text: 'Articles per Month' }
-                }
-            }
-        },
-        plugins: [{
-            id: 'electionLine',
-            afterDraw(chart) {
-                if (electionIdx < 0) return;
-                const xAxis = chart.scales.x;
-                const yAxis = chart.scales.y;
-                const x = xAxis.getPixelForValue(electionIdx);
-                const ctx = chart.ctx;
-                ctx.save();
-                ctx.beginPath();
-                ctx.setLineDash([6, 4]);
-                ctx.strokeStyle = '#DC2626';
-                ctx.lineWidth = 2;
-                ctx.moveTo(x, yAxis.top);
-                ctx.lineTo(x, yAxis.bottom);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.fillStyle = '#DC2626';
-                ctx.font = "bold 11px 'DM Sans', sans-serif";
-                ctx.textAlign = 'center';
-                ctx.fillText('Election Jul 2024', x, yAxis.top - 5);
-                ctx.restore();
-            }
-        }]
-    });
-}
-
-// Initial load
 loadTopTopics();
 </script>
 {% endblock %}
