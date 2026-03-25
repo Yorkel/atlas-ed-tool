@@ -1,6 +1,6 @@
 # AtlasED — Specification Transparency Dashboard
 
-**Live demo:** [atlased-dashboard.onrender.com](https://atlased-dashboard.onrender.com) *(prototype — link active once deployed)*
+**Live demo:** [atlased-dashboard.onrender.com](https://atlased-dashboard.onrender.com)
 
 UCL Institute of Education | 2026
 
