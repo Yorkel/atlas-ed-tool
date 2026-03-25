@@ -6,21 +6,12 @@
 {% block body %}
 <h1 class="page-title">Explore Topics</h1>
 <p class="page-desc">
-    Our main model surfaced 30 topics across the six organisations included in the data.
-    Filter by time period or organisation type to see how the top topics shift.
+    View the top ten topics across the dataset or filter by organisation type to see how
+    the top topics shift.
 </p>
 
 <div class="topics-layout">
     <div class="topics-sidebar">
-        <div class="filter-section">
-            <div class="filter-label">Time Period</div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-group="year" onclick="setYear('', this)">All</button>
-                <button class="filter-btn" data-group="year" onclick="setYear('2023', this)">2023</button>
-                <button class="filter-btn" data-group="year" onclick="setYear('2024', this)">2024</button>
-                <button class="filter-btn" data-group="year" onclick="setYear('2025', this)">2025</button>
-            </div>
-        </div>
         <div class="filter-section">
             <div class="filter-label">Organisation Type</div>
             <div class="filter-buttons">
