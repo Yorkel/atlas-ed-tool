@@ -34,29 +34,29 @@
 
 <!-- Navigation -->
 <nav class="nav">
-    <div class="nav-bar">
-        <div class="nav-section nav-standalone">
-            <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-label">Explore the Data</div>
-            <div class="nav-section-links">
-                <a href="/topics" class="nav-link {% if active == 'topics' %}active{% endif %}">Topics</a>
-                <a href="/trends" class="nav-link {% if active == 'trends' %}active{% endif %}">Trends</a>
+    <div class="nav-container">
+        <a href="/" class="nav-overview {% if active == 'overview' %}active{% endif %}">Overview</a>
+        <div class="nav-groups">
+            <div class="nav-column">
+                <span class="group-title">Explore the Data</span>
+                <div class="link-row">
+                    <a href="/topics" class="{% if active == 'topics' %}active{% endif %}">Topics</a>
+                    <a href="/trends" class="{% if active == 'trends' %}active{% endif %}">Trends</a>
+                </div>
             </div>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-label">Question the Choices</div>
-            <div class="nav-section-links">
-                <a href="/sensitivity" class="nav-link {% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
-                <a href="/ask" class="nav-link {% if active == 'ask' %}active{% endif %}">Ask the Data</a>
+            <div class="nav-column">
+                <span class="group-title">Question the Choices</span>
+                <div class="link-row">
+                    <a href="/sensitivity" class="{% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
+                    <a href="/ask" class="{% if active == 'ask' %}active{% endif %}">Ask the Data</a>
+                </div>
             </div>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-label">Implications</div>
-            <div class="nav-section-links">
-                <a href="/responsible-ai" class="nav-link {% if active == 'responsible-ai' %}active{% endif %}">Why This Matters</a>
-                <a href="/next-steps" class="nav-link {% if active == 'next-steps' %}active{% endif %}">Next Steps</a>
+            <div class="nav-column">
+                <span class="group-title">Implications</span>
+                <div class="link-row">
+                    <a href="/responsible-ai" class="{% if active == 'responsible-ai' %}active{% endif %}">Why This Matters</a>
+                    <a href="/next-steps" class="{% if active == 'next-steps' %}active{% endif %}">Next Steps</a>
+                </div>
             </div>
         </div>
     </div>
