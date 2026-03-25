@@ -34,17 +34,13 @@ async def overview(request: Request):
 
 # ── Page 2: Topics & Trends ──────────────────────────────────────────
 @app.get("/topics", response_class=HTMLResponse)
-async def topics_and_trends(request: Request, model_id: str = BASELINE_MODEL):
-    topics = queries.get_topics(model_id)
-    timeseries = queries.get_timeseries(model_id)
-    models = queries.get_models()
+async def topics_and_trends(request: Request):
+    topics = queries.get_topics(BASELINE_MODEL)
     return templates.TemplateResponse("topics.html", {
         "request": request,
         "topics": topics,
-        "timeseries_json": json.dumps(timeseries),
-        "models": models,
-        "model_id": model_id,
         "election_date": ELECTION_DATE,
+        "source_types": list(queries.SOURCES_BY_TYPE.keys()),
     })
 
 
@@ -91,7 +87,7 @@ async def implications(request: Request):
     })
 
 
-# ── API endpoint for AJAX topic data ─────────────────────────────────
+# ── API endpoints ─────────────────────────────────────────────────────
 @app.get("/api/timeseries")
 async def api_timeseries(
     model_id: str = BASELINE_MODEL,
@@ -100,3 +96,42 @@ async def api_timeseries(
     nums = [int(n) for n in topic_nums.split(",") if n.strip().isdigit()] or None
     data = queries.get_timeseries(model_id, nums)
     return data
+
+
+@app.get("/api/top_topics")
+async def api_top_topics(
+    source_type: str = Query(default=""),
+    year: str = Query(default=""),
+):
+    model = queries.get_model(BASELINE_MODEL)
+    run_id = model["run_id"]
+
+    sources = None
+    if source_type and source_type in queries.SOURCES_BY_TYPE:
+        sources = queries.SOURCES_BY_TYPE[source_type]
+
+    date_from = f"{year}-01-01" if year else None
+    date_to = f"{year}-12-31" if year else None
+
+    return queries.get_top_topics_filtered(run_id, sources, date_from, date_to)
+
+
+@app.get("/api/trends")
+async def api_trends(
+    source_type: str = Query(default=""),
+    year: str = Query(default=""),
+    topic_nums: str = Query(default=""),
+):
+    model = queries.get_model(BASELINE_MODEL)
+    run_id = model["run_id"]
+
+    sources = None
+    if source_type and source_type in queries.SOURCES_BY_TYPE:
+        sources = queries.SOURCES_BY_TYPE[source_type]
+
+    date_from = f"{year}-01-01" if year else None
+    date_to = f"{year}-12-31" if year else None
+
+    nums = [int(n) for n in topic_nums.split(",") if n.strip().isdigit()] or None
+
+    return queries.get_trend_data_filtered(run_id, sources, date_from, date_to, nums)

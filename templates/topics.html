@@ -7,185 +7,271 @@
 <div class="page-label">Temporal Analysis</div>
 <h1 class="page-title">Topics & Trends Over Time</h1>
 <p class="page-desc">
-    This is what the baseline model (k=30, full corpus) finds. These are meaningful results for
-    decision-makers. But the question SpecCheck asks is: <em>how much of this depends on the choices
-    I made to get here?</em>
+    Explore the findings from the main model — 30 topics, all sources included. See the top topics,
+    how they change over time, and how they vary across organisations. These are meaningful results
+    for decision-makers.
 </p>
 
 <div class="event-banner">
     <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
 </div>
 
-<h2 class="section-title">Top Topics by Volume</h2>
-<div class="chart-container">
-    <div class="chart-header">
-        <h3 class="chart-title">10 Largest Topics (by article count)</h3>
-        <p class="chart-subtitle">SEND, teacher workforce, and Ofsted reform dominate the policy conversation</p>
-    </div>
-    <canvas id="chart-topics-bar"></canvas>
-    <p class="chart-annotation">
-        These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of these
-        topics disappear. That's not a quality issue — it's a specification sensitivity issue.
-    </p>
-</div>
-
-<h2 class="section-title">Temporal Patterns</h2>
+<!-- Section 1: Top Topics -->
+<h2 class="section-title">Top Ten Topics</h2>
 
 <div class="controls">
     <div class="control-group">
-        {% for m in models %}
-        <button class="control-btn {% if m.model_id == model_id %}active{% endif %}"
-                onclick="location.href='/topics?model_id={{ m.model_id }}'">
-            {{ m.model_id }}
-        </button>
+        <button class="control-btn active" onclick="setYear('')">All Years</button>
+        <button class="control-btn" onclick="setYear('2023')">2023</button>
+        <button class="control-btn" onclick="setYear('2024')">2024</button>
+        <button class="control-btn" onclick="setYear('2025')">2025</button>
+    </div>
+    <div class="control-group">
+        <button class="control-btn active" onclick="setType('')">All Sources</button>
+        {% for t in source_types %}
+        <button class="control-btn" onclick="setType('{{ t }}')">{{ t }}</button>
         {% endfor %}
     </div>
+</div>
+
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title" id="barTitle">Top Ten Topics — All Sources, All Years</h3>
+    </div>
+    <canvas id="chart-bar" height="280"></canvas>
+    <p class="chart-annotation">
+        These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of
+        these topics disappear. That's not a quality issue — it's a specification sensitivity issue.
+    </p>
+</div>
+
+<!-- Section 2: Trends -->
+<h2 class="section-title">Topic Trends Over Time</h2>
+
+<div class="controls">
+    <div class="control-group">
+        <button class="control-btn active" id="btnAllTopics" onclick="selectAllTopics()">All Top Topics</button>
+        <button class="control-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Select Topics</button>
+    </div>
+</div>
+
+<div id="topicPicker" class="hidden" style="margin-bottom:1rem;">
+    <select id="topicSelect" multiple size="8" style="width:100%;max-width:500px;padding:0.5rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:0.85rem;">
+        {% for t in topics %}
+        <option value="{{ t.topic_num }}">{{ t.name | replace("_", " ") | title }} ({{ t.article_count }})</option>
+        {% endfor %}
+    </select>
+    <button class="control-btn active" onclick="updateTrends()" style="margin-top:0.5rem;border:1px solid var(--ocean);border-radius:6px;">Update Chart</button>
 </div>
 
 <div class="chart-container">
     <div class="chart-header">
         <h3 class="chart-title">Selected Topics Over Time</h3>
-        <p class="chart-subtitle">Use the topic selector below the chart to filter. The July 2024 election provides a natural experiment.</p>
+        <p class="chart-subtitle">Explore different topics across time</p>
     </div>
-    <canvas id="chart-trends"></canvas>
+    <canvas id="chart-trends" height="300"></canvas>
     <p class="chart-annotation">
-        Topics that shift pre/post election reveal how discourse responds to political events —
-        but this also means the model's findings have a shelf life.
+        <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
     </p>
 </div>
 
-<div class="controls" style="flex-wrap: wrap; gap: 0.5rem;">
-    <select id="topicSelect" multiple size="8" style="width:100%; max-width:500px; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-family:inherit; font-size:0.85rem;">
-        {% for t in topics %}
-        <option value="{{ t.topic_num }}" selected>{{ t.name }} ({{ t.article_count }})</option>
-        {% endfor %}
-    </select>
-    <button class="control-btn active" onclick="updateChart()" style="border:1px solid var(--ocean); border-radius:6px;">Update Chart</button>
-</div>
-
-<div class="callout callout-info">
-    <span class="callout-label">Temporal Context as Specification</span>
-    "When was this model trained?" matters as much as "what k was used?" — and no deployed system discloses this.
-    A topic model trained on 2023–2024 data describes a different policy landscape than one trained on 2024–2025.
-</div>
-
-<h2 class="section-title">Topic Details</h2>
-<div class="chart-container" style="overflow-x:auto;">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>#</th><th>Name</th><th>Articles</th><th>%</th><th>Top Source</th><th>Keywords</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in topics %}
-            <tr>
-                <td>{{ t.topic_num }}</td>
-                <td>{{ t.name }}</td>
-                <td>{{ t.article_count }}</td>
-                <td>{{ t.pct }}%</td>
-                <td>{{ t.top_source }}{% if t.single_source %} *{% endif %}</td>
-                <td style="font-size:0.8rem; color:var(--text-muted);">{{ t.top_keywords | join(", ") if t.top_keywords else "" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="callout callout-info" style="margin-top:2rem;">
+    <span class="callout-label">What's Next</span>
+    On the next page explore what changes when the choices behind the model change.
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-const timeseries = {{ timeseries_json | safe }};
 const COLORS = [
     "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
     "#6366f1","#14b8a6","#f97316","#06b6d4","#84cc16","#e11d48",
-    "#7c3aed","#0ea5e9","#d946ef","#facc15","#22d3ee","#a3e635",
-    "#fb7185","#38bdf8","#4ade80","#c084fc","#fbbf24","#34d399",
-    "#f472b6","#60a5fa","#a78bfa","#2dd4bf","#fb923c","#818cf8"
+    "#7c3aed","#0ea5e9","#d946ef"
 ];
 
-// Top 10 topics bar chart
-const topics = {{ topics | tojson }};
-const top10 = topics.slice(0, 10);
-new Chart(document.getElementById("chart-topics-bar"), {
-    type: "bar",
-    data: {
-        labels: top10.map(t => t.name),
-        datasets: [{
-            label: "Articles",
-            data: top10.map(t => t.article_count),
-            backgroundColor: "#0369A1",
-            borderRadius: 4
-        }]
-    },
-    options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${top10[ctx.dataIndex].pct}%)`
-                }
-            }
+function formatTopicName(name) {
+    return name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+let currentYear = '';
+let currentType = '';
+let barChart, trendsChart;
+let currentTopTopicNums = [];
+let customMode = false;
+
+// ── Bar chart ────────────────────────────────────────────────────────
+function setYear(y) {
+    currentYear = y;
+    document.querySelectorAll('.controls')[0].querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    loadTopTopics();
+}
+
+function setType(t) {
+    currentType = t;
+    document.querySelectorAll('.controls')[1].querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    loadTopTopics();
+}
+
+async function loadTopTopics() {
+    const params = new URLSearchParams();
+    if (currentYear) params.set('year', currentYear);
+    if (currentType) params.set('source_type', currentType);
+
+    const res = await fetch('/api/top_topics?' + params);
+    const data = await res.json();
+
+    // Update title
+    const yearLabel = currentYear || 'All Years';
+    const typeLabel = currentType || 'All Sources';
+    document.getElementById('barTitle').textContent = `Top Ten Topics — ${typeLabel}, ${yearLabel}`;
+
+    // Store topic nums for trends
+    currentTopTopicNums = data.map(d => d.topic_num);
+
+    // Render bar chart
+    const ctx = document.getElementById('chart-bar').getContext('2d');
+    if (barChart) barChart.destroy();
+    barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => formatTopicName(d.name)),
+            datasets: [{
+                label: 'Articles',
+                data: data.map(d => d.article_count),
+                backgroundColor: '#0369A1',
+                borderRadius: 4
+            }]
         },
-        scales: {
-            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
-            y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${data[ctx.dataIndex].pct}%)`
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
+                y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+            }
         }
-    }
-});
-
-// Trends line chart
-let trendsChart;
-
-function buildChart(data) {
-    const grouped = {};
-    data.forEach(r => {
-        if (!grouped[r.topic_name]) grouped[r.topic_name] = [];
-        grouped[r.topic_name].push({
-            x: `${r.year}-${String(r.month).padStart(2,'0')}`,
-            y: r.article_count
-        });
     });
 
+    // Also update trends if in "all" mode
+    if (!customMode) {
+        loadTrends(currentTopTopicNums);
+    }
+}
+
+// ── Trends chart ─────────────────────────────────────────────────────
+function selectAllTopics() {
+    customMode = false;
+    document.getElementById('btnAllTopics').classList.add('active');
+    document.getElementById('btnCustomTopics').classList.remove('active');
+    document.getElementById('topicPicker').classList.add('hidden');
+    loadTrends(currentTopTopicNums);
+}
+
+function enableCustomTopics() {
+    customMode = true;
+    document.getElementById('btnCustomTopics').classList.add('active');
+    document.getElementById('btnAllTopics').classList.remove('active');
+    document.getElementById('topicPicker').classList.remove('hidden');
+}
+
+function updateTrends() {
+    const sel = document.getElementById('topicSelect');
+    const nums = Array.from(sel.selectedOptions).map(o => parseInt(o.value));
+    if (nums.length > 0) loadTrends(nums);
+}
+
+async function loadTrends(topicNums) {
+    const params = new URLSearchParams();
+    if (currentType) params.set('source_type', currentType);
+    if (topicNums && topicNums.length) params.set('topic_nums', topicNums.join(','));
+
+    const res = await fetch('/api/trends?' + params);
+    const data = await res.json();
+
+    // Group by topic
+    const grouped = {};
+    const allMonths = new Set();
+    data.forEach(r => {
+        if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
+        grouped[r.topic_name][r.year_month] = r.article_count;
+        allMonths.add(r.year_month);
+    });
+
+    const months = [...allMonths].sort();
+    const electionIdx = months.indexOf('2024-07');
+
     const datasets = Object.entries(grouped).map(([name, points], i) => ({
-        label: name,
-        data: points,
+        label: formatTopicName(name),
+        data: months.map(m => points[m] || 0),
         borderColor: COLORS[i % COLORS.length],
         backgroundColor: COLORS[i % COLORS.length] + '18',
-        fill: true,
+        fill: false,
         tension: 0.3,
         pointRadius: 2
     }));
 
-    const ctx = document.getElementById("chart-trends").getContext("2d");
+    const ctx = document.getElementById('chart-trends').getContext('2d');
     if (trendsChart) trendsChart.destroy();
     trendsChart = new Chart(ctx, {
-        type: "line",
-        data: { datasets },
+        type: 'line',
+        data: { labels: months, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: { position: "top", labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
+                annotation: undefined
             },
             scales: {
-                x: { type: "category", title: { display: true, text: "Month" } },
-                y: { beginAtZero: true, title: { display: true, text: "Articles per Month" } }
+                x: {
+                    title: { display: true, text: 'Month' },
+                    ticks: { maxTicksLimit: 15 }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Articles per Month' }
+                }
             }
-        }
+        },
+        plugins: [{
+            id: 'electionLine',
+            afterDraw(chart) {
+                if (electionIdx < 0) return;
+                const xAxis = chart.scales.x;
+                const yAxis = chart.scales.y;
+                const x = xAxis.getPixelForValue(electionIdx);
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = '#DC2626';
+                ctx.lineWidth = 2;
+                ctx.moveTo(x, yAxis.top);
+                ctx.lineTo(x, yAxis.bottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#DC2626';
+                ctx.font = "bold 11px 'DM Sans', sans-serif";
+                ctx.textAlign = 'center';
+                ctx.fillText('Election', x, yAxis.top - 5);
+                ctx.restore();
+            }
+        }]
     });
 }
 
-function updateChart() {
-    const sel = document.getElementById("topicSelect");
-    const nums = Array.from(sel.selectedOptions).map(o => parseInt(o.value));
-    const filtered = timeseries.filter(r => nums.includes(r.topic_num));
-    buildChart(filtered);
-}
-
-buildChart(timeseries);
+// Initial load
+loadTopTopics();
 </script>
 {% endblock %}
