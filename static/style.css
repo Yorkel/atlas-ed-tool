@@ -92,30 +92,23 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  border-left: 1px solid var(--border);
   text-align: center;
-  margin-left: 2rem;
-  padding-left: 2rem;
-  border-left: 2px solid var(--border);
 }
 
-.nav-section:first-child {
-  border-left: none;
-  margin-left: 0;
-  padding-left: 0;
-}
+.nav-section:first-child { border-left: none; }
 
 .nav-standalone {
   flex: 0 0 auto;
+  justify-content: center;
   display: flex;
   align-items: center;
-  padding-right: 1rem;
 }
 
 .nav-standalone .nav-link {
-  padding: 1.2rem 1.5rem;
+  padding: 1rem 2.5rem;
   font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
 }
 
 .nav-section-label {
@@ -123,9 +116,9 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #B0B7C3;
-  padding: 0.45rem 0 0.2rem;
-  line-height: 1;
+  color: var(--text-muted);
+  padding: 0.4rem 0.5rem 0.25rem;
+  background: var(--bg);
 }
 
 .nav-section-links {
@@ -133,19 +126,18 @@ body {
   justify-content: center;
   flex: 1;
   align-items: center;
-  gap: 0.25rem;
 }
 
 .nav-link {
-  padding: 0.6rem 1rem;
-  font-size: 0.85rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
   border: none;
   background: none;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: all 0.15s;
+  transition: all 0.2s;
   white-space: nowrap;
   text-decoration: none;
   display: inline-block;
@@ -153,6 +145,7 @@ body {
 
 .nav-link:hover {
   color: var(--text-primary);
+  background: rgba(3, 105, 161, 0.04);
 }
 
 .nav-link.active {
@@ -165,7 +158,7 @@ body {
 .main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 3rem 2rem 4rem;
+  padding: 2.5rem 2rem;
 }
 
 @keyframes fadeIn {
@@ -187,26 +180,25 @@ body {
 
 .page-title {
   font-family: 'Source Serif 4', serif;
-  font-size: 2.4rem;
+  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
   letter-spacing: -0.02em;
 }
 
 .page-desc {
-  font-size: 1.0625rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 740px;
-  margin-bottom: 1.25rem;
+  line-height: 1.7;
+  max-width: 72ch;
+  margin-bottom: 2rem;
 }
 
 .section-title {
   font-family: 'Source Serif 4', serif;
-  font-size: 1.625rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin: 2.5rem 0 1rem;
 }
 
@@ -297,13 +289,11 @@ body {
 
 /* ── Callout Boxes ────────────────────────────────────────────────── */
 .callout {
-  padding: 1.5rem 1.75rem;
+  padding: 1.25rem 1.5rem;
   border-left: 4px solid;
   margin: 1.5rem 0;
-  line-height: 1.65;
+  line-height: 1.7;
   border-radius: 0 4px 4px 0;
-  font-size: 1rem;
-  max-width: 760px;
 }
 
 .callout-info {
@@ -326,7 +316,7 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   display: block;
   margin-bottom: 0.5rem;
 }
@@ -675,13 +665,12 @@ body {
   border-radius: 8px;
   padding: 1.5rem 2rem;
   margin: 1rem 0 2rem;
-  max-width: 760px;
 }
 
 .model-desc-card p {
   font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: 1.8;
   margin: 0;
 }
 
@@ -823,31 +812,25 @@ body {
 /* ── Footer ────────────────────────────────────────────────────────── */
 .site-footer {
   max-width: 1400px;
-  margin: 4rem auto 0;
-  padding: 2rem;
+  margin: 3rem auto 0;
+  padding: 2.5rem 2rem;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-style: italic;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border);
+  color: var(--ocean);
+  border-top: 2px solid var(--border);
   letter-spacing: 0.01em;
   line-height: 1.6;
 }
 
 /* ── Prototype Banner ──────────────────────────────────────────────── */
 .prototype-banner {
-  background: #F0F4F8;
-  color: #8896A6;
+  background: var(--amber);
+  color: var(--navy);
   text-align: center;
-  padding: 0.3rem 1rem;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-}
-
-.prototype-banner strong {
-  font-weight: 600;
-  color: #6B7A8D;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 /* ── Feedback ──────────────────────────────────────────────────────── */
