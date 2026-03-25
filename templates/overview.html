@@ -4,7 +4,6 @@
 {% block title %}AtlasED — Overview{% endblock %}
 
 {% block body %}
-<div class="page-label">About This Tool</div>
 <h1 class="page-title">What Choices Shape What AI Finds?</h1>
 <p class="page-desc">
     AI is shaping real decisions — but the choices behind these systems aren't visible. Builders can't
@@ -23,33 +22,6 @@
     wasn't wrong. It depended on how the question was set up.
 </div>
 
-<h2 class="section-title">System Overview</h2>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
-        <div class="stat-label">Total Documents Analysed</div>
-        {% if stats.date_min and stats.date_max %}
-        <div class="stat-detail">Time period: {{ stats.date_min[8:10] }}-{{ stats.date_min[5:7] }}-{{ stats.date_min[0:4] }} – {{ stats.date_max[8:10] }}-{{ stats.date_max[5:7] }}-{{ stats.date_max[0:4] }}</div>
-        {% endif %}
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
-        <div class="stat-label">Policy Topics Identified</div>
-        <div class="stat-detail">NMF, k=30, production model</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
-        <div class="stat-label">Data Sources</div>
-        <div class="stat-detail">Government, media, think tanks, civil society</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">High</div>
-        <div class="stat-label">Model Stability</div>
-        <div class="stat-detail">Topic reproducibility score</div>
-    </div>
-</div>
-
 <div class="callout callout-info">
     <span class="callout-label">The Main Model and How It Works</span>
     The model used here is a straightforward machine learning method that reads documents, groups them,
@@ -58,12 +30,37 @@
     you can see what the model found — and what it would find if different choices were made.
 </div>
 
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
+        <div class="stat-label">Total Documents Analysed</div>
+    </div>
+    <div class="stat-card">
+        {% if stats.date_min and stats.date_max %}
+        <div class="stat-value">{{ stats.date_min[8:10] }}-{{ stats.date_min[5:7] }}-{{ stats.date_min[0:4] }} – {{ stats.date_max[8:10] }}-{{ stats.date_max[5:7] }}-{{ stats.date_max[0:4] }}</div>
+        {% endif %}
+        <div class="stat-label">Time Period</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
+        <div class="stat-label">Policy Topics Identified</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
+        <div class="stat-label">Data Sources</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ "%.0f" | format((stats.stability | default(0) | float) * 100) }}%</div>
+        <div class="stat-label">Model Stability</div>
+    </div>
+</div>
+
 <div class="pipeline-grid">
     <div class="pipeline-card">
         <div class="pipeline-num">1</div>
         <div class="pipeline-content">
             <div class="pipeline-title">Data collection</div>
-            <div class="pipeline-desc">5,000+ documents across six organisation types.</div>
+            <div class="pipeline-desc">~4,000+ documents across six organisation types.</div>
             <div class="pipeline-insight">What's included shapes what's found.</div>
         </div>
     </div>
