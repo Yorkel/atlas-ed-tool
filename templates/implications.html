@@ -6,63 +6,10 @@
 {% block body %}
 <h1 class="page-title">Responsible AI Use</h1>
 <p class="page-desc">
-    This dashboard demonstrates specification sensitivity in one pipeline. The principle applies
-    to every domain where AI shapes decisions.
+    AI can map policy debates at scale, but its results need careful interpretation based on
+    how it was built. This page explores why that matters — for researchers, institutions, and
+    those affected by AI-informed decisions.
 </p>
-
-<h2 class="section-title">The Vision: SpecCheck as a Standard</h2>
-<div class="card">
-    <div class="card-title">From AtlasED to Universal Practice</div>
-    <div class="card-body">
-        <p>
-            SpecCheck becomes an open-source library with three standardized metrics, applicable to any
-            analytical pipeline, running as a pre-deployment check, a CI job, or a runtime logging layer.
-        </p>
-        <p>
-            <strong>For Engineers:</strong> "Run SpecCheck before deployment" becomes as routine as "run tests."
-            The library outputs a specification sensitivity report — a PDF or dashboard showing how findings vary
-            across perturbations.
-        </p>
-        <p>
-            <strong>For Institutions:</strong> Every deployed model includes a SpecCheck disclosure — a public
-            statement of the specification choices made and the sensitivity of findings to those choices.
-        </p>
-        <p>
-            <strong>For Affected Users:</strong> The basis to ask: "Would the decision have been different
-            under a different specification?" This is contestability at the infrastructure level.
-        </p>
-    </div>
-</div>
-
-<h2 class="section-title">Extending to Other Domains</h2>
-<div class="stats-grid">
-    <div class="card">
-        <div class="card-header">Mental Health</div>
-        <div class="card-body">
-            Crisis detection models used by emergency services — where specification choices determine who gets
-            flagged for intervention.
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">Climate Change</div>
-        <div class="card-body">
-            Policy analysis systems where the framing of "adaptation vs mitigation" depends on which sources
-            are included.
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">Criminal Justice</div>
-        <div class="card-body">
-            Risk assessment tools where the choice of features and training data shapes life-changing decisions.
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">Financial Services</div>
-        <div class="card-body">
-            Credit scoring models where specification sensitivity could reveal discriminatory patterns.
-        </div>
-    </div>
-</div>
 
 <h2 class="section-title">Why This Benefits Everyone</h2>
 
@@ -85,11 +32,4 @@
     This is the foundation of meaningful AI contestability — not just "explain the output," but "show me
     what would change if the choices were different."
 </div>
-
-<a href="/next-steps" style="text-decoration:none;display:block;">
-    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
-        <span class="callout-label">What's Next &rarr;</span>
-        See the technical details and future roadmap.
-    </div>
-</a>
 {% endblock %}

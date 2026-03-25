@@ -34,26 +34,37 @@
 
 <!-- Navigation -->
 <nav class="nav">
-    <div class="nav-content">
-        <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
-        <span class="nav-divider"></span>
-        <span class="nav-group-label">Explore the Data</span>
-        <a href="/topics" class="nav-link nav-sub {% if active == 'topics' %}active{% endif %}">Topics</a>
-        <a href="/trends" class="nav-link nav-sub {% if active == 'trends' %}active{% endif %}">Trends</a>
-        <span class="nav-divider"></span>
-        <span class="nav-group-label">Question the Choices</span>
-        <a href="/sensitivity" class="nav-link nav-sub {% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
-        <a href="/ask" class="nav-link nav-sub {% if active == 'ask' %}active{% endif %}">Interrogate the Data</a>
-        <span class="nav-divider"></span>
-        <span class="nav-group-label">Implications</span>
-        <a href="/responsible-ai" class="nav-link nav-sub {% if active == 'responsible-ai' %}active{% endif %}">Responsible AI</a>
-        <a href="/next-steps" class="nav-link nav-sub {% if active == 'next-steps' %}active{% endif %}">Next Steps</a>
+    <div class="nav-bar">
+        <div class="nav-section nav-standalone">
+            <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-label">Explore the Data</div>
+            <div class="nav-section-links">
+                <a href="/topics" class="nav-link {% if active == 'topics' %}active{% endif %}">Topics</a>
+                <a href="/trends" class="nav-link {% if active == 'trends' %}active{% endif %}">Trends</a>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-label">Question the Choices</div>
+            <div class="nav-section-links">
+                <a href="/sensitivity" class="nav-link {% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
+                <a href="/ask" class="nav-link {% if active == 'ask' %}active{% endif %}">Ask the Data</a>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-label">Implications</div>
+            <div class="nav-section-links">
+                <a href="/responsible-ai" class="nav-link {% if active == 'responsible-ai' %}active{% endif %}">Why This Matters</a>
+                <a href="/next-steps" class="nav-link {% if active == 'next-steps' %}active{% endif %}">Next Steps</a>
+            </div>
+        </div>
     </div>
 </nav>
 
 <!-- Prototype Banner -->
 <div class="prototype-banner">
-    <strong>Research prototype</strong> — designed for co-design workshops with policymakers and stakeholders.
+    <strong>Research prototype</strong> — built for workshops with policymakers and stakeholders.
 </div>
 
 <!-- Main Content -->

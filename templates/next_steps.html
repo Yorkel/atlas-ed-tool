@@ -6,37 +6,98 @@
 {% block body %}
 <h1 class="page-title">Next Steps</h1>
 <p class="page-desc">
-    From demonstration to deployment — the technical details and the roadmap ahead.
+    This dashboard demonstrates specification sensitivity in education policy. The same
+    approach applies wherever AI shapes decisions.
 </p>
 
-<h2 class="section-title">Data & Methods</h2>
-<div class="card">
-    <div class="card-title">Technical Specification</div>
-    <div class="card-body">
-        <p><strong>Period:</strong> January 2023 – September 2025</p>
-        <p><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</p>
-        <p><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</p>
-        <p><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</p>
-        <p><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</p>
-        <p><strong>Election split:</strong> 2024-07-04 (UK General Election)</p>
-    </div>
-</div>
+<h2 class="section-title">Extending to Other Domains</h2>
 
-<h2 class="section-title">From Demonstration to Deployment</h2>
-<div class="card">
-    <div class="card-body">
-        <p>
-            <strong>Immediate:</strong> Use this dashboard in stakeholder workshops to demonstrate the principle.
-            Gather feedback from policymakers, engineers, and affected communities.
-        </p>
-        <p>
-            <strong>Short-term:</strong> Develop the SpecCheck library with three core metrics: specification
-            reproducibility, finding stability, and disclosure completeness.
-        </p>
-        <p>
-            <strong>Long-term:</strong> Establish SpecCheck as a standard practice in high-stakes AI deployment —
-            alongside fairness testing, adversarial robustness, and interpretability.
-        </p>
+<div class="domain-grid">
+    <div class="domain-card domain-health">
+        <div class="domain-title">Mental Health</div>
+        <div class="domain-desc">
+            Crisis detection models used by emergency services — where specification choices determine who gets
+            flagged for intervention.
+        </div>
+    </div>
+    <div class="domain-card domain-climate">
+        <div class="domain-title">Climate Change</div>
+        <div class="domain-desc">
+            Policy analysis systems where the framing of "adaptation vs mitigation" depends on which sources
+            are included.
+        </div>
+    </div>
+    <div class="domain-card domain-justice">
+        <div class="domain-title">Criminal Justice</div>
+        <div class="domain-desc">
+            Risk assessment tools where the choice of features and training data shapes life-changing decisions.
+        </div>
+    </div>
+    <div class="domain-card domain-finance">
+        <div class="domain-title">Financial Services</div>
+        <div class="domain-desc">
+            Credit scoring models where specification sensitivity could reveal discriminatory patterns.
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.domain-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.domain-card {
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.domain-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+}
+
+.domain-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.domain-health {
+    background: rgba(3, 105, 161, 0.06);
+    border-color: rgba(3, 105, 161, 0.2);
+}
+.domain-health .domain-title { color: var(--ocean); }
+.domain-health .domain-desc { color: var(--slate); }
+
+.domain-climate {
+    background: rgba(16, 185, 129, 0.06);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+.domain-climate .domain-title { color: #059669; }
+.domain-climate .domain-desc { color: var(--slate); }
+
+.domain-justice {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: rgba(245, 158, 11, 0.2);
+}
+.domain-justice .domain-title { color: var(--amber); }
+.domain-justice .domain-desc { color: var(--slate); }
+
+.domain-finance {
+    background: rgba(139, 92, 246, 0.06);
+    border-color: rgba(139, 92, 246, 0.2);
+}
+.domain-finance .domain-title { color: #7c3aed; }
+.domain-finance .domain-desc { color: var(--slate); }
+
+@media (max-width: 768px) {
+    .domain-grid { grid-template-columns: 1fr; }
+}
+</style>
 {% endblock %}

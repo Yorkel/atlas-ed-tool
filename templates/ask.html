@@ -23,11 +23,11 @@
 <div class="compare-grid">
     <div class="comparison-panel">
         <div class="comparison-label" style="color:var(--ocean);">Full Corpus ({{ "{:,}".format(model_full.n_articles) }} articles)</div>
-        <canvas id="chartFull"></canvas>
+        <div style="max-height:350px;"><canvas id="chartFull"></canvas></div>
     </div>
     <div class="comparison-panel">
         <div class="comparison-label" style="color:var(--amber);">No Media ({{ "{:,}".format(model_nm.n_articles) }} articles)</div>
-        <canvas id="chartNM"></canvas>
+        <div style="max-height:350px;"><canvas id="chartNM"></canvas></div>
     </div>
 </div>
 
