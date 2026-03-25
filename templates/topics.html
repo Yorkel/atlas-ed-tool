@@ -41,10 +41,6 @@
     </div>
 </div>
 
-<p class="chart-annotation" style="margin-top:0.5rem;">
-    These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of
-    these topics disappear. That's not a quality issue — it's a specification sensitivity issue.
-</p>
 
 <!-- Section 2: Trends -->
 <h2 class="section-title">Topic Trends Over Time</h2>
@@ -72,14 +68,13 @@
         </div>
     </div>
     <div class="topics-chart">
+        <p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;">
+            <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
+        </p>
         <h3 class="chart-title">Selected Topics Over Time</h3>
         <canvas id="chart-trends"></canvas>
     </div>
 </div>
-
-<p class="chart-annotation" style="margin-top:0.5rem;">
-    <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
-</p>
 
 <div class="callout callout-info" style="margin-top:2rem;">
     <span class="callout-label">What's Next</span>
@@ -319,23 +314,28 @@ async function loadTrends(topicNums) {
     const res = await fetch('/api/timeseries?' + params);
     const data = await res.json();
 
-    // Aggregate to quarterly
+    // Group by month
     const grouped = {};
-    const allQuarters = new Set();
+    const allMonths = new Set();
     data.forEach(r => {
-        const q = Math.ceil(r.month / 3);
-        const label = `${r.year} Q${q}`;
+        const label = `${r.year}-${String(r.month).padStart(2,'0')}`;
         if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
         grouped[r.topic_name][label] = (grouped[r.topic_name][label] || 0) + r.article_count;
-        allQuarters.add(label);
+        allMonths.add(label);
     });
 
-    const quarters = [...allQuarters].sort();
-    const electionIdx = quarters.indexOf('2024 Q3');
+    const months = [...allMonths].sort();
+    const electionIdx = months.indexOf('2024-07');
+
+    const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const monthLabels = months.map(m => {
+        const [y, mo] = m.split('-');
+        return `${MONTH_NAMES[parseInt(mo)-1]} ${y}`;
+    });
 
     const datasets = Object.entries(grouped).map(([name, points], i) => ({
         label: formatTopicName(name),
-        data: quarters.map(q => points[q] || 0),
+        data: months.map(m => points[m] || 0),
         borderColor: COLORS[i % COLORS.length],
         backgroundColor: COLORS[i % COLORS.length] + '18',
         fill: false,
@@ -348,7 +348,7 @@ async function loadTrends(topicNums) {
     if (trendsChart) trendsChart.destroy();
     trendsChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: quarters, datasets },
+        data: { labels: monthLabels, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -357,8 +357,14 @@ async function loadTrends(topicNums) {
             },
             scales: {
                 x: {
-                    title: { display: true, text: 'Quarter' },
-                    ticks: { font: { size: 11 } }
+                    title: { display: true, text: 'Month' },
+                    ticks: {
+                        font: { size: 10 },
+                        maxRotation: 45,
+                        callback: function(val, idx) {
+                            return idx % 3 === 0 ? this.getLabelForValue(val) : '';
+                        }
+                    }
                 },
                 y: {
                     beginAtZero: true,

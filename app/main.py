@@ -51,10 +51,17 @@ async def sensitivity(request: Request):
     all_topics = {}
     for m in models:
         all_topics[m["model_id"]] = queries.get_topics(m["model_id"])
+    model_labels = {
+        "eng_k30": "Main Model (30 topics)",
+        "eng_k30_nm": "No Media",
+        "eng_k5": "5 Topics",
+        "eng_k15": "15 Topics",
+    }
     return templates.TemplateResponse("sensitivity.html", {
         "request": request,
         "models": models,
         "all_topics_json": json.dumps(all_topics),
+        "model_labels": model_labels,
         "baseline": BASELINE_MODEL,
     })
 
