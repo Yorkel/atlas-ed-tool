@@ -115,6 +115,19 @@ async def next_steps(request: Request):
     })
 
 
+# ── Feedback ──────────────────────────────────────────────────────────
+@app.post("/api/feedback")
+async def submit_feedback(request: Request):
+    body = await request.json()
+    message = body.get("message", "").strip()
+    page = body.get("page", "")
+    if not message:
+        return {"error": "Message is required"}
+    sb = queries.get_supabase()
+    sb.table("atlased_feedback").insert({"message": message, "page": page}).execute()
+    return {"ok": True}
+
+
 # ── API endpoints ─────────────────────────────────────────────────────
 @app.get("/api/timeseries")
 async def api_timeseries(

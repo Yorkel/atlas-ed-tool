@@ -820,6 +820,100 @@ body {
   font-weight: 500;
 }
 
+/* ── Feedback ──────────────────────────────────────────────────────── */
+.feedback-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--ocean);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.3);
+  transition: all 0.2s;
+  z-index: 200;
+}
+
+.feedback-btn:hover {
+  background: #0284C7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(3, 105, 161, 0.4);
+}
+
+.feedback-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.feedback-box {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.feedback-box h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-box textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.feedback-box textarea:focus {
+  outline: none;
+  border-color: var(--ocean);
+}
+
+.feedback-submit {
+  padding: 0.6rem 1.5rem;
+  background: var(--ocean);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.feedback-submit:hover { background: #0284C7; }
+
+.feedback-cancel {
+  padding: 0.6rem 1.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.feedback-cancel:hover { background: var(--bg); }
+
 /* ── Hidden ────────────────────────────────────────────────────────── */
 .hidden { display: none; }
 

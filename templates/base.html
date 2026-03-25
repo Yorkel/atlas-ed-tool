@@ -61,10 +61,56 @@
     {% block body %}{% endblock %}
 </main>
 
+<!-- Feedback Button -->
+<button class="feedback-btn" onclick="document.getElementById('feedbackModal').style.display='flex'">Feedback</button>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="feedback-modal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+    <div class="feedback-box">
+        <h3>Share Your Feedback</h3>
+        <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">Anonymous — your feedback helps improve this tool.</p>
+        <textarea id="feedbackMsg" placeholder="What did you think? What could be improved?" rows="4"></textarea>
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button class="feedback-submit" onclick="submitFeedback()">Send</button>
+            <button class="feedback-cancel" onclick="document.getElementById('feedbackModal').style.display='none'">Cancel</button>
+        </div>
+        <div id="feedbackStatus" style="margin-top:0.75rem;font-size:0.85rem;"></div>
+    </div>
+</div>
+
 <!-- Footer -->
 <footer class="site-footer">
     This project is a collaboration between UCL Institute of Education and UCL Public Policy, with funding from UCL Grand Challenges.
 </footer>
+
+<script>
+async function submitFeedback() {
+    const msg = document.getElementById('feedbackMsg').value.trim();
+    if (!msg) return;
+    const status = document.getElementById('feedbackStatus');
+    status.textContent = 'Sending...';
+    status.style.color = 'var(--text-muted)';
+    try {
+        const res = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ message: msg, page: window.location.pathname })
+        });
+        if (res.ok) {
+            status.textContent = 'Thank you for your feedback!';
+            status.style.color = 'var(--ocean)';
+            document.getElementById('feedbackMsg').value = '';
+            setTimeout(() => { document.getElementById('feedbackModal').style.display = 'none'; status.textContent = ''; }, 2000);
+        } else {
+            status.textContent = 'Something went wrong. Please try again.';
+            status.style.color = 'var(--rust)';
+        }
+    } catch(e) {
+        status.textContent = 'Something went wrong. Please try again.';
+        status.style.color = 'var(--rust)';
+    }
+}
+</script>
 
 <script>
 Chart.defaults.font.family = "'DM Sans', -apple-system, system-ui, sans-serif";
