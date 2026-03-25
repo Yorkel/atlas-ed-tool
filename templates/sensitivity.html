@@ -7,84 +7,71 @@
 <div class="page-label">Specification Sensitivity</div>
 <h1 class="page-title">What Changes When Specifications Change?</h1>
 <p class="page-desc">
-    Specification choices like topic count and dataset composition influence the model.
-    Users can explore different configurations and see how outputs change — and how this compares
-    to the baseline model.
+    Choose two models below and compare them side by side. Same data, different specification
+    choices, different results. The highlighted topics are shared between both models —
+    everything else changed.
 </p>
 
-<div class="stepper">
-    <div class="step active" data-step="STEP 1" onclick="goStep(1)">
-        <div class="step-title">Configure Model</div>
-        <div class="step-desc">Choose topic count and source composition</div>
+<div class="callout callout-info">
+    <span class="callout-label">How to read this</span>
+    Each model uses a different number of topics (k) or a different corpus. Topics that appear in
+    <strong>both</strong> models are highlighted. Topics that appear in only one are specification-dependent —
+    they exist because of the choices made, not because the data demands them.
+</div>
+
+<!-- Model selectors -->
+<div class="compare-selectors">
+    <div class="compare-selector">
+        <label>Model A</label>
+        <select id="modelA" onchange="updateComparison()">
+            {% for m in models %}
+            <option value="{{ m.model_id }}" {% if m.model_id == 'eng_k30' %}selected{% endif %}>
+                {{ m.model_id }} — k={{ m.k }}, {{ m.corpus_type }} ({{ "{:,}".format(m.n_articles) }} articles)
+            </option>
+            {% endfor %}
+        </select>
     </div>
-    <div class="step" data-step="STEP 2" onclick="goStep(2)">
-        <div class="step-title">View Results</div>
-        <div class="step-desc">See what your chosen model finds</div>
-    </div>
-    <div class="step" data-step="STEP 3" onclick="goStep(3)">
-        <div class="step-title">Compare to Baseline</div>
-        <div class="step-desc">What changed? What stayed the same?</div>
+    <div class="compare-selector">
+        <label>Model B</label>
+        <select id="modelB" onchange="updateComparison()">
+            {% for m in models %}
+            <option value="{{ m.model_id }}" {% if m.model_id == 'eng_k5' %}selected{% endif %}>
+                {{ m.model_id }} — k={{ m.k }}, {{ m.corpus_type }} ({{ "{:,}".format(m.n_articles) }} articles)
+            </option>
+            {% endfor %}
+        </select>
     </div>
 </div>
 
-<!-- Step 1: Configuration -->
-<div id="step-1" class="step-content">
-    <h2 class="section-title">Model Configuration</h2>
-    <div class="model-cards">
-        {% for m in models %}
-        <div class="model-card {% if m.model_id == baseline %}selected{% endif %}"
-             onclick="selectModel('{{ m.model_id }}')" id="card-{{ m.model_id }}">
-            <h3>{{ m.model_id }}</h3>
-            <p>k = {{ m.k }} &middot; {{ "{:,}".format(m.n_articles) }} articles</p>
-            <p>Corpus: {{ m.corpus_type }}</p>
-            <p>Stability: {{ m.stability }}</p>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="callout callout-info" id="config-hint">
-        <span class="callout-label">Current Selection</span>
-        <span id="hintText"><strong>{{ baseline }}</strong> — This is the baseline production model.
-        Select a different model above to see how findings change.</span>
-    </div>
+<!-- Summary banner -->
+<div id="summaryBanner" class="callout callout-warning" style="margin-top:0;">
+    <span class="callout-label">Comparison Result</span>
+    <span id="summaryText"></span>
 </div>
 
-<!-- Step 2: Results -->
-<div id="step-2" class="step-content hidden">
-    <h2 class="section-title">Topics for <span id="selectedModelName">{{ baseline }}</span></h2>
+<!-- Stats comparison -->
+<div class="compare-grid" id="statsRow"></div>
 
-    <div id="resultsMetrics" class="stats-grid"></div>
-
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Top 10 Topics</h3>
-            <p class="chart-subtitle" id="results-subtitle">Your model's results</p>
+<!-- Side-by-side topics -->
+<div class="compare-grid">
+    <div class="comparison-panel" id="panelA">
+        <div class="comparison-label" id="labelA"></div>
+        <div class="chart-container" style="border:none;box-shadow:none;padding:0;margin:0;">
+            <canvas id="chartA" height="250"></canvas>
         </div>
-        <canvas id="chart-results"></canvas>
+        <div id="topicsA" style="margin-top:1rem;"></div>
     </div>
-
-    <div id="topicsList" style="margin-top:1.5rem;"></div>
-</div>
-
-<!-- Step 3: Comparison -->
-<div id="step-3" class="step-content hidden">
-    <h2 class="section-title">Comparison: <span id="compareLabel"></span></h2>
-    <div class="compare-grid">
-        <div class="comparison-panel">
-            <div class="comparison-label" id="leftLabel">{{ baseline }}</div>
-            <div id="leftTopics"></div>
+    <div class="comparison-panel" id="panelB">
+        <div class="comparison-label" id="labelB"></div>
+        <div class="chart-container" style="border:none;box-shadow:none;padding:0;margin:0;">
+            <canvas id="chartB" height="250"></canvas>
         </div>
-        <div class="comparison-panel">
-            <div class="comparison-label" id="rightLabel"></div>
-            <div id="rightTopics"></div>
-        </div>
-    </div>
-    <div class="comparison-summary" id="comp-summary">
-        <strong>Insight:</strong> <span id="compInsight">Select a different model to see how findings diverge from the baseline.</span>
+        <div id="topicsB" style="margin-top:1rem;"></div>
     </div>
 </div>
 
 <h2 class="section-title">Key Findings</h2>
+
 <div class="chart-container">
     <table class="data-table">
         <thead><tr><th>k</th><th>Stability</th><th>Single-source topics</th><th>Observation</th></tr></thead>
@@ -101,59 +88,133 @@
     <strong>k is a volume knob for minority sources</strong> — as k increases, smaller voices
     (FFT, EPI, Nuffield) become audible in topics shaped for them.
 </div>
+
+<div class="callout callout-critical">
+    <span class="callout-label">What Removing Media Does</span>
+    Removing SchoolsWeek (70% of the corpus) doesn't just shrink the dataset — it changes what
+    education policy "looks like." Teacher strikes vanish. Shared debate fragments into
+    institutional monologues. The full corpus is crisis-oriented; the no-media corpus is procedural.
+</div>
 {% endblock %}
 
 {% block scripts %}
+<style>
+.compare-selectors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+}
+.compare-selector label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+.compare-selector select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.compare-selector select:focus {
+    outline: none;
+    border-color: var(--ocean);
+}
+.topic-shared {
+    background: rgba(3, 105, 161, 0.08);
+    border-left: 3px solid var(--ocean);
+    padding-left: 0.5rem;
+}
+.topic-unique {
+    opacity: 0.7;
+    border-left: 3px solid var(--border);
+    padding-left: 0.5rem;
+}
+.stat-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+.stat-compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.stat-compare-card .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+.stat-compare-card .stat-values {
+    display: flex;
+    gap: 1.5rem;
+    align-items: baseline;
+}
+.stat-compare-card .val-a {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rust);
+}
+.stat-compare-card .val-b {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ocean);
+}
+.stat-compare-card .vs { color: var(--text-muted); font-size: 0.85rem; }
+</style>
+
 <script>
 const allTopics = {{ all_topics_json | safe }};
 const models = {{ models | tojson }};
-const baseline = "{{ baseline }}";
-let selectedModel = baseline;
-let resultsChart;
+let chartA, chartB;
 
-function selectModel(id) {
-    document.querySelectorAll(".model-card").forEach(c => c.classList.remove("selected"));
-    document.getElementById("card-" + id).classList.add("selected");
-    selectedModel = id;
-
-    const m = models.find(m => m.model_id === id);
-    const hint = document.getElementById("hintText");
-    if (id === baseline) {
-        hint.innerHTML = `<strong>${id}</strong> — This is the baseline production model. Select a different model to see how findings change.`;
-    } else {
-        hint.innerHTML = `<strong>${id}</strong> — k=${m.k}, ${m.corpus_type} corpus, ${m.n_articles.toLocaleString()} articles. Click Step 2 to view results.`;
-    }
+function getModel(id) {
+    return models.find(m => m.model_id === id);
 }
 
-function renderTopics(topics, container) {
-    const el = document.getElementById(container);
-    el.innerHTML = topics.map(t =>
-        `<div class="topic-row">
-            <strong>${t.name}</strong>
-            <span class="topic-meta">${t.article_count} articles (${t.pct}%) &middot; ${t.top_source}${t.single_source ? " *" : ""}</span>
-        </div>`
-    ).join("");
-}
-
-function renderResultsChart(topics) {
+function renderChart(canvasId, topics, existingChart) {
     const top10 = topics.slice(0, 10);
-    const ctx = document.getElementById("chart-results").getContext("2d");
-    if (resultsChart) resultsChart.destroy();
-    resultsChart = new Chart(ctx, {
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    if (existingChart) existingChart.destroy();
+    return new Chart(ctx, {
         type: "bar",
         data: {
             labels: top10.map(t => t.name),
             datasets: [{
                 label: "Articles",
                 data: top10.map(t => t.article_count),
-                backgroundColor: "#0369A1",
+                backgroundColor: canvasId === "chartA" ? "#DC2626" : "#0369A1",
                 borderRadius: 4
             }]
         },
         options: {
             indexAxis: "y",
             responsive: true,
-            plugins: { legend: { display: false } },
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.parsed.x} articles (${top10[ctx.dataIndex].pct}%)`
+                    }
+                }
+            },
             scales: {
                 x: { grid: { display: false } },
                 y: { grid: { display: false }, ticks: { font: { size: 11 } } }
@@ -162,45 +223,72 @@ function renderResultsChart(topics) {
     });
 }
 
-function goStep(n) {
-    document.querySelectorAll(".step-content").forEach(p => p.classList.add("hidden"));
-    document.getElementById("step-" + n).classList.remove("hidden");
-    document.querySelectorAll(".step").forEach(s => {
-        s.classList.toggle("active", s.dataset.step === "STEP " + n);
-    });
-
-    if (n === 2) {
-        const topics = allTopics[selectedModel] || [];
-        const m = models.find(m => m.model_id === selectedModel);
-        document.getElementById("selectedModelName").textContent = selectedModel;
-        document.getElementById("results-subtitle").textContent = `${selectedModel}: k=${m.k}, ${m.corpus_type} corpus`;
-
-        document.getElementById("resultsMetrics").innerHTML = `
-            <div class="stat-card"><div class="stat-value">${m.k}</div><div class="stat-label">Topics (k)</div></div>
-            <div class="stat-card"><div class="stat-value">${m.n_articles.toLocaleString()}</div><div class="stat-label">Articles</div></div>
-            <div class="stat-card"><div class="stat-value">${m.stability}</div><div class="stat-label">Stability</div></div>
-            <div class="stat-card"><div class="stat-value">${m.mean_weight}</div><div class="stat-label">Mean Weight</div></div>
-        `;
-
-        renderResultsChart(topics);
-        renderTopics(topics, "topicsList");
-    }
-    if (n === 3) {
-        document.getElementById("compareLabel").textContent = `${selectedModel} vs ${baseline}`;
-        document.getElementById("leftLabel").textContent = selectedModel;
-        document.getElementById("rightLabel").textContent = baseline + " (baseline)";
-        renderTopics(allTopics[selectedModel] || [], "leftTopics");
-        renderTopics(allTopics[baseline] || [], "rightTopics");
-
-        const selTopics = (allTopics[selectedModel] || []).map(t => t.name);
-        const baseTopics = (allTopics[baseline] || []).map(t => t.name);
-        const shared = selTopics.filter(n => baseTopics.includes(n));
-        const pct = baseTopics.length ? Math.round(shared.length / baseTopics.length * 100) : 0;
-        document.getElementById("compInsight").textContent =
-            selectedModel === baseline
-                ? "Select a different model in Step 1 to compare."
-                : `${shared.length} of ${baseTopics.length} baseline topics (${pct}%) are preserved. ${baseTopics.length - shared.length} topics changed.`;
-    }
+function renderTopicList(topics, containerId, sharedNames) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = topics.map(t => {
+        const isShared = sharedNames.has(t.name);
+        return `<div class="topic-row ${isShared ? 'topic-shared' : 'topic-unique'}">
+            <strong>${t.name}</strong> ${isShared ? '<span style="color:var(--ocean);font-size:0.75rem;font-weight:700;"> SHARED</span>' : ''}
+            <span class="topic-meta">${t.article_count} articles (${t.pct}%) &middot; ${t.top_source}${t.single_source ? " *" : ""}</span>
+        </div>`;
+    }).join("");
 }
+
+function updateComparison() {
+    const idA = document.getElementById("modelA").value;
+    const idB = document.getElementById("modelB").value;
+    const mA = getModel(idA);
+    const mB = getModel(idB);
+    const topicsA = allTopics[idA] || [];
+    const topicsB = allTopics[idB] || [];
+
+    // Labels
+    document.getElementById("labelA").textContent = `Model A — ${idA}`;
+    document.getElementById("labelB").textContent = `Model B — ${idB}`;
+
+    // Find shared topics
+    const namesA = new Set(topicsA.map(t => t.name));
+    const namesB = new Set(topicsB.map(t => t.name));
+    const shared = new Set([...namesA].filter(n => namesB.has(n)));
+    const pct = Math.max(namesA.size, namesB.size) > 0
+        ? Math.round(shared.size / Math.max(namesA.size, namesB.size) * 100) : 0;
+
+    // Summary
+    document.getElementById("summaryText").innerHTML =
+        idA === idB
+            ? "You're comparing the same model. Select two different models to see what changes."
+            : `<strong>${shared.size}</strong> topics are shared between both models. <strong>${namesA.size - shared.size}</strong> topics exist only in Model A, <strong>${namesB.size - shared.size}</strong> only in Model B. Only <strong>${pct}%</strong> of topics are preserved across this specification change.`;
+
+    // Stats row
+    document.getElementById("statsRow").innerHTML = `
+        <div class="stat-compare-card">
+            <div class="stat-label">Topics (k)</div>
+            <div class="stat-values"><span class="val-a">${mA.k}</span><span class="vs">vs</span><span class="val-b">${mB.k}</span></div>
+        </div>
+        <div class="stat-compare-card">
+            <div class="stat-label">Articles</div>
+            <div class="stat-values"><span class="val-a">${mA.n_articles.toLocaleString()}</span><span class="vs">vs</span><span class="val-b">${mB.n_articles.toLocaleString()}</span></div>
+        </div>
+        <div class="stat-compare-card">
+            <div class="stat-label">Stability</div>
+            <div class="stat-values"><span class="val-a">${mA.stability}</span><span class="vs">vs</span><span class="val-b">${mB.stability}</span></div>
+        </div>
+        <div class="stat-compare-card">
+            <div class="stat-label">Corpus</div>
+            <div class="stat-values"><span class="val-a">${mA.corpus_type}</span><span class="vs">vs</span><span class="val-b">${mB.corpus_type}</span></div>
+        </div>
+    `;
+
+    // Charts
+    chartA = renderChart("chartA", topicsA, chartA);
+    chartB = renderChart("chartB", topicsB, chartB);
+
+    // Topic lists with shared highlighting
+    renderTopicList(topicsA, "topicsA", shared);
+    renderTopicList(topicsB, "topicsB", shared);
+}
+
+// Initial render
+updateComparison();
 </script>
 {% endblock %}
