@@ -60,12 +60,15 @@
         </div>
         <div class="filter-section" id="topicPicker" style="display:none;">
             <div class="filter-label">Select Topics</div>
-            <select id="topicSelect" multiple size="10" class="topic-multiselect">
+            <div class="topic-checkboxes">
                 {% for t in topics %}
-                <option value="{{ t.topic_num }}">{{ t.name | replace("_", " ") | title }}</option>
+                <label class="topic-checkbox">
+                    <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
+                    {{ t.name | replace("_", " ") | title }}
+                </label>
                 {% endfor %}
-            </select>
-            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update</button>
+            </div>
+            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update Chart</button>
         </div>
     </div>
     <div class="topics-chart">
@@ -157,14 +160,30 @@
     max-height: 350px;
 }
 
-.topic-multiselect {
-    width: 100%;
-    padding: 0.4rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-family: inherit;
+.topic-checkboxes {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.topic-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.2rem 0;
+}
+
+.topic-checkbox:hover {
     color: var(--text-primary);
+}
+
+.topic-checkbox input {
+    accent-color: var(--ocean);
 }
 
 @media (max-width: 768px) {
@@ -288,46 +307,48 @@ function enableCustomTopics() {
 }
 
 function updateTrends() {
-    const sel = document.getElementById('topicSelect');
-    const nums = Array.from(sel.selectedOptions).map(o => parseInt(o.value));
+    const checked = document.querySelectorAll('.topic-cb:checked');
+    const nums = Array.from(checked).map(cb => parseInt(cb.value));
     if (nums.length > 0) loadTrends(nums);
 }
 
 async function loadTrends(topicNums) {
     const params = new URLSearchParams();
-    if (currentType) params.set('source_type', currentType);
     if (topicNums && topicNums.length) params.set('topic_nums', topicNums.join(','));
 
-    const res = await fetch('/api/trends?' + params);
+    const res = await fetch('/api/timeseries?' + params);
     const data = await res.json();
 
+    // Aggregate to quarterly
     const grouped = {};
-    const allMonths = new Set();
+    const allQuarters = new Set();
     data.forEach(r => {
+        const q = Math.ceil(r.month / 3);
+        const label = `${r.year} Q${q}`;
         if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
-        grouped[r.topic_name][r.year_month] = r.article_count;
-        allMonths.add(r.year_month);
+        grouped[r.topic_name][label] = (grouped[r.topic_name][label] || 0) + r.article_count;
+        allQuarters.add(label);
     });
 
-    const months = [...allMonths].sort();
-    const electionIdx = months.indexOf('2024-07');
+    const quarters = [...allQuarters].sort();
+    const electionIdx = quarters.indexOf('2024 Q3');
 
     const datasets = Object.entries(grouped).map(([name, points], i) => ({
         label: formatTopicName(name),
-        data: months.map(m => points[m] || 0),
+        data: quarters.map(q => points[q] || 0),
         borderColor: COLORS[i % COLORS.length],
         backgroundColor: COLORS[i % COLORS.length] + '18',
         fill: false,
-        tension: 0.3,
-        pointRadius: 2,
-        borderWidth: 2
+        tension: 0.4,
+        pointRadius: 3,
+        borderWidth: 2.5
     }));
 
     const ctx = document.getElementById('chart-trends').getContext('2d');
     if (trendsChart) trendsChart.destroy();
     trendsChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: months, datasets },
+        data: { labels: quarters, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -336,8 +357,8 @@ async function loadTrends(topicNums) {
             },
             scales: {
                 x: {
-                    title: { display: true, text: 'Month' },
-                    ticks: { maxTicksLimit: 15, font: { size: 11 } }
+                    title: { display: true, text: 'Quarter' },
+                    ticks: { font: { size: 11 } }
                 },
                 y: {
                     beginAtZero: true,
