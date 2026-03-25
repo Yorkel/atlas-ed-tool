@@ -4,19 +4,19 @@
 {% block title %}AtlasED — Overview{% endblock %}
 
 {% block body %}
-<div class="page-label">Production System</div>
-<h1 class="page-title">Making AI Pipeline Choices Visible</h1>
+<div class="page-label">About This Tool</div>
+<h1 class="page-title">What Choices Shape What AI Finds?</h1>
 <p class="page-desc">
-    Every AI pipeline makes choices that determine what it finds. These choices are invisible.
-    AtlasED makes them visible and testable. This is a production NLP system analysing education
-    policy documents across England — with every specification choice disclosed and every finding contestable.
+    AI is shaping real decisions — but the choices behind these systems aren't visible. Builders can't
+    easily show them, decision makers can't assess them, and those affected can't question them.
+    AtlasED analyses thousands of policy documents to show how design choices shape what AI finds.
 </p>
 
 <div class="callout callout-info">
     <span class="callout-label">Why This Matters</span>
-    This tool will be used to run workshops with policy stakeholders to discuss how AI outputs
-    should be used in high-stakes decision-making. When a model tells you "SEND is the largest
-    education issue," you need to know: is that real, or is that a choice I made when I set k=30?
+    A policymaker asks the biggest issue in education. The model says "child welfare," so funding follows.
+    Change one model setting, and that single topic splits into distinct problems — each needing different
+    solutions. The answer wasn't wrong — it reflected one way the model was set up.
 </div>
 
 <h2 class="section-title">System Overview</h2>
@@ -25,7 +25,9 @@
     <div class="stat-card">
         <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
         <div class="stat-label">Total Documents Analysed</div>
-        <div class="stat-detail">{{ stats.date_min }} – {{ stats.date_max }}</div>
+        {% if stats.date_min and stats.date_max %}
+        <div class="stat-detail">{{ stats.date_min[8:10] }}-{{ stats.date_min[5:7] }}-{{ stats.date_min[0:4] }} – {{ stats.date_max[8:10] }}-{{ stats.date_max[5:7] }}-{{ stats.date_max[0:4] }}</div>
+        {% endif %}
     </div>
     <div class="stat-card">
         <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
@@ -34,121 +36,83 @@
     </div>
     <div class="stat-card">
         <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
-        <div class="stat-label">Source Organisations</div>
-        <div class="stat-detail">SchoolsWeek (70%) + Gov + Think Tanks</div>
+        <div class="stat-label">Data Sources</div>
+        <div class="stat-detail">Government, media, think tanks, civil society</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">{{ "%.3f" | format(stats.stability | default(0) | float) }}</div>
+        <div class="stat-value">High</div>
         <div class="stat-label">Model Stability</div>
         <div class="stat-detail">Topic reproducibility score</div>
     </div>
 </div>
 
-<h2 class="section-title">Source Distribution</h2>
-<div class="chart-container">
-    <div class="chart-header">
-        <h3 class="chart-title">Articles by Source Organisation</h3>
-        <p class="chart-subtitle">SchoolsWeek dominates the corpus — but is that a problem or a design choice?</p>
+<div class="info-cards-row">
+    <div class="card">
+        <div class="card-header">Core Model</div>
+        <div class="card-body">
+            Production model chosen through standard checks.
+        </div>
     </div>
-    <canvas id="chart-sources"></canvas>
-    <p class="chart-annotation">
-        SchoolsWeek provides 70% of the corpus. This concentration shapes every finding.
-        The Specification Sensitivity page shows what happens when you remove it.
-    </p>
+    <div class="card">
+        <div class="card-header">What We Vary</div>
+        <div class="card-title">Data</div>
+        <div class="card-body">
+            Education media makes up ~70% of documents. We rerun the model without it to test impact.
+        </div>
+        <div class="card-title" style="margin-top:1rem;">Number of topics</div>
+        <div class="card-body">
+            We compare 30 topics with simpler (5) and more detailed (15) versions.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">Key Point</div>
+        <div class="card-body">
+            These are just a few of many possible choices.
+            Every choice shapes results — and every choice can be tested.
+        </div>
+    </div>
 </div>
 
-<h2 class="section-title">Topic Distribution</h2>
-<div class="chart-container">
-    <div class="chart-header">
-        <h3 class="chart-title">All Topics by Article Count</h3>
-        <p class="chart-subtitle">The baseline model (k=30) identifies these policy areas in the corpus</p>
-    </div>
-    <canvas id="chart-topics"></canvas>
-</div>
+<h2 class="section-title">How It Works</h2>
 
-<h2 class="section-title">Why NMF?</h2>
-<div class="card">
-    <div class="card-header">Model Choice Rationale</div>
-    <div class="card-title">Transparency Over Performance</div>
-    <div class="card-body">
-        <p>
-            Non-negative Matrix Factorization (NMF) was chosen deliberately — not because it's the most
-            sophisticated model, but because this project is about <strong>specification transparency</strong>,
-            and NMF makes every modeling choice explicit and auditable.
-        </p>
-        <p>
-            The number of topics (k), the vocabulary preprocessing, the document weighting — these
-            aren't hidden inside a neural network. They're parameters you set, and you can see what happens
-            when you change them.
-        </p>
+<div class="steps-grid">
+    <div class="step-card">
+        <div class="step-card-num">1</div>
+        <div class="step-card-title">Data collection</div>
+        <div class="step-card-desc">
+            5,000+ documents across six organisation types.
+            What's included shapes what's found.
+        </div>
+    </div>
+    <div class="step-card">
+        <div class="step-card-num">2</div>
+        <div class="step-card-title">Text processing</div>
+        <div class="step-card-desc">
+            Text is cleaned and simplified.
+            These choices shape the model's language.
+        </div>
+    </div>
+    <div class="step-card">
+        <div class="step-card-num">3</div>
+        <div class="step-card-title">Model</div>
+        <div class="step-card-desc">
+            We use NMF — a transparent method with visible settings.
+            In more complex AI, these choices still exist but are harder to see.
+        </div>
+    </div>
+    <div class="step-card">
+        <div class="step-card-num">4</div>
+        <div class="step-card-title">Quality checks</div>
+        <div class="step-card-desc">
+            The model is consistent and passes standard tests.
+            But these don't show how results change under different choices.
+        </div>
     </div>
 </div>
 
 <div class="callout callout-warning">
     <span class="callout-label">The Core Finding</span>
-    No specification choice preserves more than 18% of topic names. Standard diagnostics cannot detect this.
-    The only way to know is to perturb and compare. That's what the next pages show.
+    Fewer than 1 in 5 findings stayed the same across configurations — while every quality check still passed.
+    The model looked just as reliable each time. It was just telling a different story.
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-const topics = {{ topics | tojson }};
-const sourceCounts = {{ stats.source_counts | default({}) | tojson }};
-
-// Source distribution chart
-new Chart(document.getElementById("chart-sources"), {
-    type: "bar",
-    data: {
-        labels: Object.keys(sourceCounts),
-        datasets: [{
-            label: "Article Count",
-            data: Object.values(sourceCounts),
-            backgroundColor: "#0369A1",
-            borderRadius: 4
-        }]
-    },
-    options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
-            y: { grid: { display: false } }
-        }
-    }
-});
-
-// Topic distribution chart
-new Chart(document.getElementById("chart-topics"), {
-    type: "bar",
-    data: {
-        labels: topics.map(t => t.name),
-        datasets: [{
-            label: "Articles",
-            data: topics.map(t => t.article_count),
-            backgroundColor: "#0369A1",
-            borderRadius: 4
-        }]
-    },
-    options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${topics[ctx.dataIndex].pct}%)`
-                }
-            }
-        },
-        scales: {
-            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
-            y: { grid: { display: false }, ticks: { font: { size: 11 } } }
-        }
-    }
-});
-</script>
 {% endblock %}
