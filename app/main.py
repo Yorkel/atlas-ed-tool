@@ -1,0 +1,102 @@
+"""AtlasED Dashboard — FastAPI application."""
+
+import json
+from pathlib import Path
+from fastapi import FastAPI, Request, Query
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+from app import queries
+
+app = FastAPI(title="AtlasED Dashboard")
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
+
+BASELINE_MODEL = "eng_k30"
+ELECTION_DATE = "2024-07-04"
+
+
+# ── Page 1: Overview ──────────────────────────────────────────────────
+@app.get("/", response_class=HTMLResponse)
+async def overview(request: Request):
+    stats = queries.get_overview_stats(BASELINE_MODEL)
+    topics = queries.get_topics(BASELINE_MODEL)
+    return templates.TemplateResponse("overview.html", {
+        "request": request,
+        "stats": stats,
+        "topics": topics,
+        "model_id": BASELINE_MODEL,
+    })
+
+
+# ── Page 2: Topics & Trends ──────────────────────────────────────────
+@app.get("/topics", response_class=HTMLResponse)
+async def topics_and_trends(request: Request, model_id: str = BASELINE_MODEL):
+    topics = queries.get_topics(model_id)
+    timeseries = queries.get_timeseries(model_id)
+    models = queries.get_models()
+    return templates.TemplateResponse("topics.html", {
+        "request": request,
+        "topics": topics,
+        "timeseries_json": json.dumps(timeseries),
+        "models": models,
+        "model_id": model_id,
+        "election_date": ELECTION_DATE,
+    })
+
+
+# ── Page 3: Specification Sensitivity ────────────────────────────────
+@app.get("/sensitivity", response_class=HTMLResponse)
+async def sensitivity(request: Request):
+    models = queries.get_models()
+    all_topics = {}
+    for m in models:
+        all_topics[m["model_id"]] = queries.get_topics(m["model_id"])
+    return templates.TemplateResponse("sensitivity.html", {
+        "request": request,
+        "models": models,
+        "all_topics_json": json.dumps(all_topics),
+        "baseline": BASELINE_MODEL,
+    })
+
+
+# ── Page 4: Ask the Data (RAG) ───────────────────────────────────────
+@app.get("/ask", response_class=HTMLResponse)
+async def ask_the_data(request: Request):
+    rag_full = queries.get_rag_contexts("full")
+    rag_nm = queries.get_rag_contexts("no_media")
+
+    # Pair up questions: full vs no-media side by side
+    questions = {}
+    for r in rag_full:
+        questions[r["question"]] = {"full": r}
+    for r in rag_nm:
+        if r["question"] in questions:
+            questions[r["question"]]["no_media"] = r
+
+    return templates.TemplateResponse("ask.html", {
+        "request": request,
+        "questions": questions,
+    })
+
+
+# ── Page 5: Implications ─────────────────────────────────────────────
+@app.get("/implications", response_class=HTMLResponse)
+async def implications(request: Request):
+    return templates.TemplateResponse("implications.html", {
+        "request": request,
+    })
+
+
+# ── API endpoint for AJAX topic data ─────────────────────────────────
+@app.get("/api/timeseries")
+async def api_timeseries(
+    model_id: str = BASELINE_MODEL,
+    topic_nums: str = Query(default=""),
+):
+    nums = [int(n) for n in topic_nums.split(",") if n.strip().isdigit()] or None
+    data = queries.get_timeseries(model_id, nums)
+    return data

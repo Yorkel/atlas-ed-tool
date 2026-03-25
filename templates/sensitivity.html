@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% set active = "sensitivity" %}
+
+{% block title %}AtlasED — Specification Sensitivity{% endblock %}
+{% block heading %}Specification Sensitivity{% endblock %}
+{% block description %}How model specification choices shape topic modelling outputs{% endblock %}
+
+{% block body %}
+<div class="stepper">
+    <div class="step active" data-step="1">
+        <span class="step-num">1</span> Configure
+    </div>
+    <div class="step" data-step="2">
+        <span class="step-num">2</span> View Results
+    </div>
+    <div class="step" data-step="3">
+        <span class="step-num">3</span> Compare
+    </div>
+</div>
+
+<!-- Step 1: Configure -->
+<section class="step-panel" id="step1">
+    <h2>Choose a model to explore</h2>
+    <div class="model-cards">
+        {% for m in models %}
+        <div class="model-card {% if m.model_id == baseline %}selected{% endif %}"
+             onclick="selectModel('{{ m.model_id }}')" id="card-{{ m.model_id }}">
+            <h3>{{ m.model_id }}</h3>
+            <p>k = {{ m.k }} &middot; {{ m.n_articles }} articles</p>
+            <p>Corpus: {{ m.corpus_type }}</p>
+            <p>Stability: {{ m.stability }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="btn" onclick="goStep(2)">View Results &rarr;</button>
+</section>
+
+<!-- Step 2: View Results -->
+<section class="step-panel hidden" id="step2">
+    <h2>Topics for <span id="selectedModelName">{{ baseline }}</span></h2>
+    <div id="topicsList"></div>
+    <button class="btn" onclick="goStep(1)">&larr; Back</button>
+    <button class="btn" onclick="goStep(3)">Compare to Baseline &rarr;</button>
+</section>
+
+<!-- Step 3: Compare -->
+<section class="step-panel hidden" id="step3">
+    <h2>Comparison: <span id="compareLabel"></span></h2>
+    <div class="compare-grid">
+        <div>
+            <h3 id="leftLabel">{{ baseline }}</h3>
+            <div id="leftTopics"></div>
+        </div>
+        <div>
+            <h3 id="rightLabel"></h3>
+            <div id="rightTopics"></div>
+        </div>
+    </div>
+    <button class="btn" onclick="goStep(2)">&larr; Back</button>
+</section>
+
+<section class="card" style="margin-top:2rem">
+    <h2>Key Findings</h2>
+    <table class="data-table">
+        <thead><tr><th>k</th><th>Stability</th><th>Single-source topics</th><th>Observation</th></tr></thead>
+        <tbody>
+            <tr><td>5</td><td>1.000</td><td>60%</td><td>One catch-all topic holds 49% of articles. Minority sources invisible.</td></tr>
+            <tr><td>15</td><td>1.000</td><td>40%</td><td>RAAC and breakfast clubs disappear. FFT/EPI first visible.</td></tr>
+            <tr><td>30</td><td>0.966</td><td>47%</td><td>Maximum granularity. Multiple plausible solutions emerge.</td></tr>
+        </tbody>
+    </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const allTopics = {{ all_topics_json | safe }};
+const baseline = "{{ baseline }}";
+let selectedModel = baseline;
+
+function selectModel(id) {
+    document.querySelectorAll(".model-card").forEach(c => c.classList.remove("selected"));
+    document.getElementById("card-" + id).classList.add("selected");
+    selectedModel = id;
+}
+
+function renderTopics(topics, container) {
+    const el = document.getElementById(container);
+    el.innerHTML = topics.map(t =>
+        `<div class="topic-row">
+            <strong>${t.name}</strong>
+            <span class="topic-meta">${t.article_count} articles (${t.pct}%) &middot; ${t.top_source}${t.single_source ? " *" : ""}</span>
+        </div>`
+    ).join("");
+}
+
+function goStep(n) {
+    document.querySelectorAll(".step-panel").forEach(p => p.classList.add("hidden"));
+    document.getElementById("step" + n).classList.remove("hidden");
+    document.querySelectorAll(".step").forEach(s => {
+        s.classList.toggle("active", parseInt(s.dataset.step) === n);
+    });
+
+    if (n === 2) {
+        document.getElementById("selectedModelName").textContent = selectedModel;
+        renderTopics(allTopics[selectedModel] || [], "topicsList");
+    }
+    if (n === 3) {
+        document.getElementById("compareLabel").textContent = `${baseline} vs ${selectedModel}`;
+        document.getElementById("leftLabel").textContent = baseline;
+        document.getElementById("rightLabel").textContent = selectedModel;
+        renderTopics(allTopics[baseline] || [], "leftTopics");
+        renderTopics(allTopics[selectedModel] || [], "rightTopics");
+    }
+}
+</script>
+{% endblock %}

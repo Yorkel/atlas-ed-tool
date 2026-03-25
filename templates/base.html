@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AtlasED{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>AtlasED</h2>
+            <span class="subtitle">Specification Transparency</span>
+        </div>
+        <ul>
+            <li><a href="/" class="{% if active == 'overview' %}active{% endif %}">Overview</a></li>
+            <li><a href="/topics" class="{% if active == 'topics' %}active{% endif %}">Topics &amp; Trends</a></li>
+            <li><a href="/sensitivity" class="{% if active == 'sensitivity' %}active{% endif %}">Specification Sensitivity</a></li>
+            <li><a href="/ask" class="{% if active == 'ask' %}active{% endif %}">Ask the Data</a></li>
+            <li><a href="/implications" class="{% if active == 'implications' %}active{% endif %}">Implications</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <header class="page-header">
+            <h1>{% block heading %}{% endblock %}</h1>
+            <p class="page-desc">{% block description %}{% endblock %}</p>
+        </header>
+        <div class="page-body">
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

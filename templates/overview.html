@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% set active = "overview" %}
+
+{% block title %}AtlasED — Overview{% endblock %}
+{% block heading %}Overview{% endblock %}
+{% block description %}Key metrics for the {{ model_id }} baseline model{% endblock %}
+
+{% block body %}
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <span class="kpi-value">{{ stats.n_articles | default(0) }}</span>
+        <span class="kpi-label">Articles</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-value">{{ stats.n_topics | default(0) }}</span>
+        <span class="kpi-label">Topics</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-value">{{ stats.n_sources | default(0) }}</span>
+        <span class="kpi-label">Sources</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-value">{{ stats.date_min }} &mdash; {{ stats.date_max }}</span>
+        <span class="kpi-label">Date Range</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-value">{{ "%.3f" | format(stats.stability | default(0)) }}</span>
+        <span class="kpi-label">Stability</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-value">{{ "%.3f" | format(stats.mean_weight | default(0)) }}</span>
+        <span class="kpi-label">Mean Weight</span>
+    </div>
+</div>
+
+<section class="card">
+    <h2>Source Distribution</h2>
+    <canvas id="sourceChart" height="100"></canvas>
+</section>
+
+<section class="card">
+    <h2>Topic Distribution ({{ model_id }})</h2>
+    <canvas id="topicChart" height="200"></canvas>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const topics = {{ topics | tojson }};
+
+// Source distribution — from pre-computed source_counts
+const sourceCounts = {{ stats.source_counts | default({}) | tojson }};
+new Chart(document.getElementById("sourceChart"), {
+    type: "doughnut",
+    data: {
+        labels: Object.keys(sourceCounts),
+        datasets: [{
+            data: Object.values(sourceCounts),
+            backgroundColor: ["#2563eb","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#6366f1"]
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: "right" } } }
+});
+
+// Topic distribution bar chart
+new Chart(document.getElementById("topicChart"), {
+    type: "bar",
+    data: {
+        labels: topics.map(t => t.name),
+        datasets: [{
+            label: "Articles",
+            data: topics.map(t => t.article_count),
+            backgroundColor: "#2563eb"
+        }]
+    },
+    options: {
+        responsive: true,
+        indexAxis: "y",
+        plugins: { legend: { display: false } },
+        scales: { x: { title: { display: true, text: "Article count" } } }
+    }
+});
+</script>
+{% endblock %}

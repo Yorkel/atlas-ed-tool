@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% set active = "ask" %}
+
+{% block title %}AtlasED — Ask the Data{% endblock %}
+{% block heading %}Ask the Data{% endblock %}
+{% block description %}Same question, different corpus — see how specification choices change RAG answers{% endblock %}
+
+{% block body %}
+<div class="controls">
+    <label for="questionSelect">Question:</label>
+    <select id="questionSelect" onchange="showQuestion(this.value)">
+        {% for q in questions %}
+        <option value="{{ loop.index0 }}">{{ q }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="rag-dual-panel">
+    <div class="rag-panel">
+        <h3>Full Corpus (including media)</h3>
+        <div id="fullAnswer" class="rag-answer"></div>
+        <div id="fullMeta" class="rag-meta"></div>
+    </div>
+    <div class="rag-panel">
+        <h3>No-Media Corpus</h3>
+        <div id="nmAnswer" class="rag-answer"></div>
+        <div id="nmMeta" class="rag-meta"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const questions = {{ questions | tojson }};
+const qKeys = Object.keys(questions);
+
+function showQuestion(idx) {
+    const q = questions[qKeys[idx]];
+    const full = q.full || {};
+    const nm = q.no_media || {};
+
+    document.getElementById("fullAnswer").innerHTML = marked.parse(full.answer || "No data");
+    document.getElementById("nmAnswer").innerHTML = marked.parse(nm.answer || "No data");
+
+    document.getElementById("fullMeta").innerHTML = renderMeta(full);
+    document.getElementById("nmMeta").innerHTML = renderMeta(nm);
+}
+
+function renderMeta(r) {
+    if (!r) return "";
+    const sources = (r.sources_used || []).join(", ");
+    const topics = (r.topics_covered || []).join(", ");
+    return `<p><strong>Sources:</strong> ${sources}</p>
+            <p><strong>Topics:</strong> ${topics}</p>
+            <p><strong>Retrieved:</strong> ${r.n_retrieved || 0} articles</p>`;
+}
+
+showQuestion(0);
+</script>
+{% endblock %}

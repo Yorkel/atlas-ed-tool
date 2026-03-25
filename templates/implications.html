@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% set active = "implications" %}
+
+{% block title %}AtlasED — Implications{% endblock %}
+{% block heading %}Implications{% endblock %}
+{% block description %}What specification transparency means for education policy analysis{% endblock %}
+
+{% block body %}
+<section class="card prose">
+    <h2>The Core Argument</h2>
+    <p>
+        Model specification choices &mdash; the number of topics (k), which sources are included,
+        and how text is preprocessed &mdash; shape outputs <strong>as much as the data itself</strong>.
+    </p>
+    <p>
+        This dashboard demonstrates that there is no single "correct" topic model of education policy.
+        Every model is a lens, and every lens has a focal point that makes some things visible while
+        obscuring others.
+    </p>
+</section>
+
+<section class="card prose">
+    <h2>What We Found</h2>
+    <h3>k is a volume knob for minority sources</h3>
+    <p>
+        At k=5, a single catch-all topic absorbs 49% of articles. Think tanks (FFT, EPI, Nuffield)
+        are invisible. At k=30, they each get dedicated topics. The choice of k determines which
+        voices are heard.
+    </p>
+
+    <h3>The education debate is produced by media</h3>
+    <p>
+        Removing SchoolsWeek (70% of the corpus) doesn't just reduce the dataset &mdash; it
+        fundamentally changes what education policy "looks like". Teacher strikes vanish.
+        Shared debate fragments into institutional monologues. Crisis narratives become
+        procedural compliance. The full corpus is crisis-oriented (council deficits, EHCP wait times);
+        the no-media corpus is procedural (statutory guidance, compliance requirements).
+    </p>
+
+    <h3>Contestability reveals uncertainty</h3>
+    <p>
+        The contestability score (normalised Shannon entropy) shows that many articles don't belong
+        clearly to a single topic. High contestability articles sit at the boundaries between topics
+        &mdash; precisely the articles where specification choices matter most.
+    </p>
+</section>
+
+<section class="card prose">
+    <h2>SpecCheck: A Vision for Specification Transparency</h2>
+    <p>
+        AtlasED demonstrates a methodology we call <strong>SpecCheck</strong> &mdash; the practice of
+        systematically varying model specifications and presenting the differences to users.
+    </p>
+    <p>
+        Rather than presenting a single set of results as definitive, SpecCheck asks:
+        <em>what would change if we made different choices?</em> This approach treats model
+        specification as an analytical decision that should be visible, not hidden.
+    </p>
+    <p>
+        Future applications could extend this to other NLP tasks: sentiment analysis, named entity
+        recognition, document classification &mdash; any task where preprocessing and parameter
+        choices shape outputs.
+    </p>
+</section>
+
+<section class="card prose">
+    <h2>Data &amp; Methods</h2>
+    <ul>
+        <li><strong>Period:</strong> January 2023 &ndash; September 2025</li>
+        <li><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</li>
+        <li><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</li>
+        <li><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</li>
+        <li><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</li>
+        <li><strong>Election split:</strong> 2024-07-04 (UK General Election)</li>
+    </ul>
+</section>
+{% endblock %}
