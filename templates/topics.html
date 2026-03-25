@@ -4,84 +4,188 @@
 {% block title %}AtlasED — Topics & Trends{% endblock %}
 
 {% block body %}
-<div class="page-label">Temporal Analysis</div>
 <h1 class="page-title">Topics & Trends Over Time</h1>
 <p class="page-desc">
-    Explore the findings from the main model — 30 topics, all sources included. See the top topics,
-    how they change over time, and how they vary across organisations. These are meaningful results
-    for decision-makers.
+    Our main model surfaced 30 topics across the six organisations included in the data. On this
+    page you can explore the top topics found, how they change over time, and how they vary
+    across organisations.
 </p>
-
-<div class="event-banner">
-    <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
-</div>
 
 <!-- Section 1: Top Topics -->
 <h2 class="section-title">Top Ten Topics</h2>
 
-<div class="controls">
-    <div class="control-group">
-        <button class="control-btn active" onclick="setYear('')">All Years</button>
-        <button class="control-btn" onclick="setYear('2023')">2023</button>
-        <button class="control-btn" onclick="setYear('2024')">2024</button>
-        <button class="control-btn" onclick="setYear('2025')">2025</button>
+<div class="topics-layout">
+    <div class="topics-sidebar">
+        <div class="filter-section">
+            <div class="filter-label">Time Period</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-group="year" onclick="setYear('', this)">All</button>
+                <button class="filter-btn" data-group="year" onclick="setYear('2023', this)">2023</button>
+                <button class="filter-btn" data-group="year" onclick="setYear('2024', this)">2024</button>
+                <button class="filter-btn" data-group="year" onclick="setYear('2025', this)">2025</button>
+            </div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-label">Organisation Type</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-group="type" onclick="setType('', this)">All</button>
+                {% for t in source_types %}
+                <button class="filter-btn" data-group="type" onclick="setType('{{ t }}', this)">{{ t }}</button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    <div class="control-group">
-        <button class="control-btn active" onclick="setType('')">All Sources</button>
-        {% for t in source_types %}
-        <button class="control-btn" onclick="setType('{{ t }}')">{{ t }}</button>
-        {% endfor %}
+    <div class="topics-chart">
+        <h3 class="chart-title" id="barTitle">All Sources, All Years</h3>
+        <canvas id="chart-bar"></canvas>
     </div>
 </div>
 
-<div class="chart-container">
-    <div class="chart-header">
-        <h3 class="chart-title" id="barTitle">Top Ten Topics — All Sources, All Years</h3>
-    </div>
-    <canvas id="chart-bar" height="280"></canvas>
-    <p class="chart-annotation">
-        These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of
-        these topics disappear. That's not a quality issue — it's a specification sensitivity issue.
-    </p>
-</div>
+<p class="chart-annotation" style="margin-top:0.5rem;">
+    These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of
+    these topics disappear. That's not a quality issue — it's a specification sensitivity issue.
+</p>
 
 <!-- Section 2: Trends -->
 <h2 class="section-title">Topic Trends Over Time</h2>
 
-<div class="controls">
-    <div class="control-group">
-        <button class="control-btn active" id="btnAllTopics" onclick="selectAllTopics()">All Top Topics</button>
-        <button class="control-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Select Topics</button>
+<div class="topics-layout">
+    <div class="topics-sidebar">
+        <div class="filter-section">
+            <div class="filter-label">Topics</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
+                <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
+            </div>
+        </div>
+        <div class="filter-section" id="topicPicker" style="display:none;">
+            <div class="filter-label">Select Topics</div>
+            <select id="topicSelect" multiple size="10" class="topic-multiselect">
+                {% for t in topics %}
+                <option value="{{ t.topic_num }}">{{ t.name | replace("_", " ") | title }}</option>
+                {% endfor %}
+            </select>
+            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update</button>
+        </div>
     </div>
-</div>
-
-<div id="topicPicker" class="hidden" style="margin-bottom:1rem;">
-    <select id="topicSelect" multiple size="8" style="width:100%;max-width:500px;padding:0.5rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:0.85rem;">
-        {% for t in topics %}
-        <option value="{{ t.topic_num }}">{{ t.name | replace("_", " ") | title }} ({{ t.article_count }})</option>
-        {% endfor %}
-    </select>
-    <button class="control-btn active" onclick="updateTrends()" style="margin-top:0.5rem;border:1px solid var(--ocean);border-radius:6px;">Update Chart</button>
-</div>
-
-<div class="chart-container">
-    <div class="chart-header">
+    <div class="topics-chart">
         <h3 class="chart-title">Selected Topics Over Time</h3>
-        <p class="chart-subtitle">Explore different topics across time</p>
+        <canvas id="chart-trends"></canvas>
     </div>
-    <canvas id="chart-trends" height="300"></canvas>
-    <p class="chart-annotation">
-        <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
-    </p>
 </div>
+
+<p class="chart-annotation" style="margin-top:0.5rem;">
+    <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
+</p>
 
 <div class="callout callout-info" style="margin-top:2rem;">
     <span class="callout-label">What's Next</span>
-    On the next page explore what changes when the choices behind the model change.
+    These are meaningful results for understanding education policy. But the question is: how much of this
+    depends on the choices made to get here? On the next page explore what changes when the choices behind
+    the model change.
 </div>
 {% endblock %}
 
 {% block scripts %}
+<style>
+.topics-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.topics-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-right: 1px solid var(--border);
+    padding-right: 1.5rem;
+}
+
+.filter-section {}
+
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.filter-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+
+.filter-btn:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: var(--ocean);
+    color: white;
+    border-color: var(--ocean);
+}
+
+.topics-chart {
+    min-height: 0;
+}
+
+.topics-chart canvas {
+    max-height: 350px;
+}
+
+.topic-multiselect {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .topics-layout {
+        grid-template-columns: 1fr;
+    }
+    .topics-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .filter-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+</style>
+
 <script>
 const COLORS = [
     "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
@@ -99,21 +203,22 @@ let barChart, trendsChart;
 let currentTopTopicNums = [];
 let customMode = false;
 
-// ── Bar chart ────────────────────────────────────────────────────────
-function setYear(y) {
+// ── Filter handling ──────────────────────────────────────────────────
+function setYear(y, btn) {
     currentYear = y;
-    document.querySelectorAll('.controls')[0].querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelectorAll('[data-group="year"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     loadTopTopics();
 }
 
-function setType(t) {
+function setType(t, btn) {
     currentType = t;
-    document.querySelectorAll('.controls')[1].querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelectorAll('[data-group="type"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     loadTopTopics();
 }
 
+// ── Bar chart ────────────────────────────────────────────────────────
 async function loadTopTopics() {
     const params = new URLSearchParams();
     if (currentYear) params.set('year', currentYear);
@@ -122,15 +227,12 @@ async function loadTopTopics() {
     const res = await fetch('/api/top_topics?' + params);
     const data = await res.json();
 
-    // Update title
     const yearLabel = currentYear || 'All Years';
     const typeLabel = currentType || 'All Sources';
-    document.getElementById('barTitle').textContent = `Top Ten Topics — ${typeLabel}, ${yearLabel}`;
+    document.getElementById('barTitle').textContent = `${typeLabel}, ${yearLabel}`;
 
-    // Store topic nums for trends
     currentTopTopicNums = data.map(d => d.topic_num);
 
-    // Render bar chart
     const ctx = document.getElementById('chart-bar').getContext('2d');
     if (barChart) barChart.destroy();
     barChart = new Chart(ctx, {
@@ -140,14 +242,15 @@ async function loadTopTopics() {
             datasets: [{
                 label: 'Articles',
                 data: data.map(d => d.article_count),
-                backgroundColor: '#0369A1',
-                borderRadius: 4
+                backgroundColor: data.map((_, i) => COLORS[i % COLORS.length]),
+                borderRadius: 6,
+                borderSkipped: false
             }]
         },
         options: {
             indexAxis: 'y',
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -158,12 +261,11 @@ async function loadTopTopics() {
             },
             scales: {
                 x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
-                y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                y: { grid: { display: false }, ticks: { font: { size: 12 } } }
             }
         }
     });
 
-    // Also update trends if in "all" mode
     if (!customMode) {
         loadTrends(currentTopTopicNums);
     }
@@ -174,7 +276,7 @@ function selectAllTopics() {
     customMode = false;
     document.getElementById('btnAllTopics').classList.add('active');
     document.getElementById('btnCustomTopics').classList.remove('active');
-    document.getElementById('topicPicker').classList.add('hidden');
+    document.getElementById('topicPicker').style.display = 'none';
     loadTrends(currentTopTopicNums);
 }
 
@@ -182,7 +284,7 @@ function enableCustomTopics() {
     customMode = true;
     document.getElementById('btnCustomTopics').classList.add('active');
     document.getElementById('btnAllTopics').classList.remove('active');
-    document.getElementById('topicPicker').classList.remove('hidden');
+    document.getElementById('topicPicker').style.display = 'block';
 }
 
 function updateTrends() {
@@ -199,7 +301,6 @@ async function loadTrends(topicNums) {
     const res = await fetch('/api/trends?' + params);
     const data = await res.json();
 
-    // Group by topic
     const grouped = {};
     const allMonths = new Set();
     data.forEach(r => {
@@ -218,7 +319,8 @@ async function loadTrends(topicNums) {
         backgroundColor: COLORS[i % COLORS.length] + '18',
         fill: false,
         tension: 0.3,
-        pointRadius: 2
+        pointRadius: 2,
+        borderWidth: 2
     }));
 
     const ctx = document.getElementById('chart-trends').getContext('2d');
@@ -228,15 +330,14 @@ async function loadTrends(topicNums) {
         data: { labels: months, datasets },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
-                annotation: undefined
+                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
             },
             scales: {
                 x: {
                     title: { display: true, text: 'Month' },
-                    ticks: { maxTicksLimit: 15 }
+                    ticks: { maxTicksLimit: 15, font: { size: 11 } }
                 },
                 y: {
                     beginAtZero: true,
@@ -264,7 +365,7 @@ async function loadTrends(topicNums) {
                 ctx.fillStyle = '#DC2626';
                 ctx.font = "bold 11px 'DM Sans', sans-serif";
                 ctx.textAlign = 'center';
-                ctx.fillText('Election', x, yAxis.top - 5);
+                ctx.fillText('Election Jul 2024', x, yAxis.top - 5);
                 ctx.restore();
             }
         }]
