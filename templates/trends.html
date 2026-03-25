@@ -170,7 +170,7 @@ async function loadTrends(topicNums) {
     if (topicNums) params.set('topic_nums', topicNums);
 
     const res = await fetch('/api/timeseries?' + params);
-    const data = await res.json();
+    let data = await res.json();
 
     // If no topic filter, take top 10 by total count
     if (!topicNums) {

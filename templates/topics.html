@@ -145,18 +145,13 @@ function setType(t, btn) {
     loadTopTopics();
 }
 
-async function loadTopTopics() {
-    const params = new URLSearchParams();
-    if (currentYear) params.set('year', currentYear);
-    if (currentType) params.set('source_type', currentType);
+// Default data from server (instant render)
+const defaultTopics = {{ topics | tojson }};
+const defaultTop10 = defaultTopics.slice(0, 10).map(t => ({
+    topic_num: t.topic_num, name: t.name, article_count: t.article_count, pct: t.pct
+}));
 
-    const res = await fetch('/api/top_topics?' + params);
-    const data = await res.json();
-
-    const yearLabel = currentYear || 'All Years';
-    const typeLabel = currentType || 'All Sources';
-    document.getElementById('barTitle').textContent = `${typeLabel}, ${yearLabel}`;
-
+function renderBar(data) {
     const ctx = document.getElementById('chart-bar').getContext('2d');
     if (barChart) barChart.destroy();
     barChart = new Chart(ctx, {
@@ -191,6 +186,28 @@ async function loadTopTopics() {
     });
 }
 
-loadTopTopics();
+async function loadTopTopics() {
+    // If no filters, use server data
+    if (!currentYear && !currentType) {
+        document.getElementById('barTitle').textContent = 'All Sources, All Years';
+        renderBar(defaultTop10);
+        return;
+    }
+
+    const params = new URLSearchParams();
+    if (currentYear) params.set('year', currentYear);
+    if (currentType) params.set('source_type', currentType);
+
+    const res = await fetch('/api/top_topics?' + params);
+    const data = await res.json();
+
+    const yearLabel = currentYear || 'All Years';
+    const typeLabel = currentType || 'All Sources';
+    document.getElementById('barTitle').textContent = `${typeLabel}, ${yearLabel}`;
+    renderBar(data);
+}
+
+// Instant render with default data
+renderBar(defaultTop10);
 </script>
 {% endblock %}
