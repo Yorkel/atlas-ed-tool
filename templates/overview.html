@@ -7,8 +7,8 @@
 <div class="page-label">About This Tool</div>
 <h1 class="page-title">What Choices Shape What AI Finds?</h1>
 <p class="page-desc">
-    AI is shaping real decisions, but the choices behind these systems aren't visible. Builders can't
-    show them, decision makers can't assess them, and those affected can't question them.
+    AI is shaping real decisions — but the choices behind these systems aren't visible. Builders can't
+    easily show them, decision makers can't assess them, and those affected can't question them.
 </p>
 <p class="page-desc">
     AtlasED makes those choices visible. It analyses thousands of policy documents to show how
@@ -17,10 +17,10 @@
 
 <div class="callout callout-info">
     <span class="callout-label">Why This Matters</span>
-    A policymaker asks an AI model what the biggest issue in education is. The model says "learning outcomes,"
-    so funding follows. Change one setting, and that single category separates into distinct measures —
-    reading scores, maths attainment, progress rates, and early years development — each requiring different
-    interventions. The result wasn't wrong, it depended on how the problem was defined.
+    A policymaker asks AI what the biggest issue in education is. The model says 'learning outcomes,'
+    so funding follows. Change one setting, and that single category splits into reading scores, maths
+    attainment, progress rates, and early years development — each needing different action. The result
+    wasn't wrong. It depended on how the question was set up.
 </div>
 
 <h2 class="section-title">System Overview</h2>
@@ -30,7 +30,7 @@
         <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
         <div class="stat-label">Total Documents Analysed</div>
         {% if stats.date_min and stats.date_max %}
-        <div class="stat-detail">{{ stats.date_min[8:10] }}-{{ stats.date_min[5:7] }}-{{ stats.date_min[0:4] }} – {{ stats.date_max[8:10] }}-{{ stats.date_max[5:7] }}-{{ stats.date_max[0:4] }}</div>
+        <div class="stat-detail">Time period: {{ stats.date_min[8:10] }}-{{ stats.date_min[5:7] }}-{{ stats.date_min[0:4] }} – {{ stats.date_max[8:10] }}-{{ stats.date_max[5:7] }}-{{ stats.date_max[0:4] }}</div>
         {% endif %}
     </div>
     <div class="stat-card">
@@ -44,37 +44,22 @@
         <div class="stat-detail">Government, media, think tanks, civil society</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">{{ "%.0f" | format((stats.stability | default(0) | float) * 100) }}%</div>
+        <div class="stat-value">High</div>
         <div class="stat-label">Model Stability</div>
         <div class="stat-detail">Topic reproducibility score</div>
     </div>
 </div>
 
-<h2 class="section-title">Our Model and What We Varied</h2>
+<h2 class="section-title">The Main Model</h2>
 
-<div class="model-overview-card">
-    <div class="model-overview-section">
-        <div class="model-overview-label">Core Model</div>
-        <p>Production model chosen through standard checks. Uses Non-negative Matrix Factorisation (NMF) — a transparent method where every setting is visible and auditable.</p>
-    </div>
-    <div class="model-overview-divider"></div>
-    <div class="model-overview-variations">
-        <div class="model-overview-label">What We Varied</div>
-        <div class="variation-items">
-            <div class="variation-item">
-                <div class="variation-name">Data composition</div>
-                <div class="variation-desc">Education media makes up ~70% of documents. We rerun the model without it to test impact.</div>
-            </div>
-            <div class="variation-item">
-                <div class="variation-name">Number of topics</div>
-                <div class="variation-desc">We compare 30 topics with simpler (5) and more detailed (15) versions.</div>
-            </div>
-        </div>
-    </div>
-    <div class="model-overview-divider"></div>
-    <div class="model-overview-section">
-        <div class="model-overview-label">Key Point</div>
-        <p>These are just a few of many possible choices. <strong>Every choice shapes results — and every choice can be tested.</strong></p>
+<div class="card">
+    <div class="card-body">
+        <p>
+            The model used here is a straightforward machine learning method that reads documents, groups them,
+            and identifies topics. We chose it deliberately — because every choice is visible. The number of
+            topics, the data sources, the text processing — change any one and watch the findings shift. Here
+            you can see what the model found — and what it would find if different choices were made.
+        </p>
     </div>
 </div>
 
@@ -115,9 +100,8 @@
     </div>
 </div>
 
-<div class="callout callout-warning">
-    <span class="callout-label">The Core Finding</span>
-    Fewer than 1 in 5 findings stayed the same across configurations — while every quality check still passed.
-    The model looked just as reliable each time. It was just telling a different story.
+<div class="callout callout-info" style="margin-top: 2rem;">
+    <span class="callout-label">What's Next</span>
+    The next pages show what the model found — and what changes when the choices behind it change.
 </div>
 {% endblock %}
