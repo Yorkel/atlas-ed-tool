@@ -47,32 +47,32 @@ async def topics_and_trends(request: Request):
 # ── Page 3: Specification Sensitivity ────────────────────────────────
 @app.get("/sensitivity", response_class=HTMLResponse)
 async def sensitivity(request: Request):
-    models = queries.get_models()
+    k_models = ["eng_k5", "eng_k15", "eng_k30"]
     all_topics = {}
-    for m in models:
-        all_topics[m["model_id"]] = queries.get_topics(m["model_id"])
-    model_labels = {
-        "eng_k30": "Main Model (30 topics)",
-        "eng_k30_nm": "No Media",
-        "eng_k5": "5 Topics",
-        "eng_k15": "15 Topics",
-    }
+    for mid in k_models:
+        all_topics[mid] = queries.get_topics(mid)
+    models = [queries.get_model(mid) for mid in k_models]
     return templates.TemplateResponse("sensitivity.html", {
         "request": request,
-        "models": models,
+        "models": [m for m in models if m],
         "all_topics_json": json.dumps(all_topics),
-        "model_labels": model_labels,
         "baseline": BASELINE_MODEL,
     })
 
 
-# ── Page 4: Ask the Data (RAG) ───────────────────────────────────────
+# ── Page 4: Ask the Data (corpus comparison + RAG) ───────────────────
 @app.get("/ask", response_class=HTMLResponse)
 async def ask_the_data(request: Request):
+    # Corpus comparison data
+    topics_full = queries.get_topics("eng_k30")
+    topics_nm = queries.get_topics("eng_k30_nm")
+    model_full = queries.get_model("eng_k30")
+    model_nm = queries.get_model("eng_k30_nm")
+
+    # RAG data
     rag_full = queries.get_rag_contexts("full")
     rag_nm = queries.get_rag_contexts("no_media")
 
-    # Pair up questions: full vs no-media side by side
     questions = {}
     for r in rag_full:
         questions[r["question"]] = {"full": r}
@@ -82,6 +82,10 @@ async def ask_the_data(request: Request):
 
     return templates.TemplateResponse("ask.html", {
         "request": request,
+        "topics_full": topics_full,
+        "topics_nm": topics_nm,
+        "model_full": model_full or {"n_articles": 3943},
+        "model_nm": model_nm or {"n_articles": 1198},
         "questions": questions,
     })
 

@@ -4,18 +4,16 @@
 {% block title %}AtlasED — Model Sensitivity{% endblock %}
 
 {% block body %}
-<h1 class="page-title">What Happens When the Model Changes?</h1>
+<h1 class="page-title">How Many Topics Should We Look For?</h1>
 <p class="page-desc">
-    Choose two models below and compare them side by side. Same data, different specification
-    choices, different results. Topics that appear in both models share the same colour —
-    everything else changed.
+    The main model uses 30 topics. But what if we asked for fewer? Here you can compare what the
+    model finds with 5, 15, or 30 topics — same data, same method, different level of detail.
 </p>
 
 <div class="callout callout-info">
     <span class="callout-label">How to read this</span>
-    Each model uses a different number of topics or a different corpus. Topics that appear in
-    <strong>both</strong> models share the same colour. Grey topics exist in only one model —
-    they are specification-dependent, shaped by the choices made, not by the data alone.
+    Topics that appear in <strong>both</strong> models share the same colour. Grey topics exist in
+    only one — they appeared or disappeared when the number of topics changed.
 </div>
 
 <!-- Model selectors -->
@@ -23,21 +21,17 @@
     <div class="compare-selector">
         <label>Model 1</label>
         <select id="modelA" onchange="updateComparison()">
-            {% for m in models %}
-            <option value="{{ m.model_id }}" {% if m.model_id == 'eng_k30' %}selected{% endif %}>
-                {{ model_labels[m.model_id] }}
-            </option>
-            {% endfor %}
+            <option value="eng_k30" selected>Main Model (30 topics)</option>
+            <option value="eng_k15">15 Topics</option>
+            <option value="eng_k5">5 Topics</option>
         </select>
     </div>
     <div class="compare-selector">
         <label>Model 2</label>
         <select id="modelB" onchange="updateComparison()">
-            {% for m in models %}
-            <option value="{{ m.model_id }}" {% if m.model_id == 'eng_k5' %}selected{% endif %}>
-                {{ model_labels[m.model_id] }}
-            </option>
-            {% endfor %}
+            <option value="eng_k30">Main Model (30 topics)</option>
+            <option value="eng_k15">15 Topics</option>
+            <option value="eng_k5" selected>5 Topics</option>
         </select>
     </div>
 </div>
@@ -60,7 +54,6 @@
     </div>
 </div>
 
-
 <h2 class="section-title">Key Findings</h2>
 
 <div class="chart-container">
@@ -80,11 +73,10 @@
     (FFT, EPI, Nuffield) become audible in topics shaped for them.
 </div>
 
-<div class="callout callout-critical">
-    <span class="callout-label">What Removing Media Does</span>
-    Removing SchoolsWeek (70% of the corpus) doesn't just shrink the dataset — it changes what
-    education policy "looks like." Teacher strikes vanish. Shared debate fragments into
-    institutional monologues. The full corpus is crisis-oriented; the no-media corpus is procedural.
+<div class="callout callout-info" style="margin-top:2rem;">
+    <span class="callout-label">What's Next</span>
+    This page changed the number of topics. On the next page, we change the data itself —
+    removing all media articles to see how that shifts what the model finds.
 </div>
 {% endblock %}
 
@@ -120,16 +112,6 @@
     outline: none;
     border-color: var(--ocean);
 }
-.topic-shared {
-    background: rgba(3, 105, 161, 0.06);
-    border-left: 3px solid var(--ocean);
-    padding-left: 0.5rem;
-}
-.topic-unique {
-    border-left: 3px solid var(--border);
-    padding-left: 0.5rem;
-}
-.topic-unique strong { color: var(--text-muted); }
 .comparison-panel canvas {
     max-height: 320px;
 }
@@ -138,7 +120,12 @@
 <script>
 const allTopics = {{ all_topics_json | safe }};
 const models = {{ models | tojson }};
-const MODEL_LABELS = {{ model_labels | tojson }};
+
+const MODEL_LABELS = {
+    "eng_k30": "Main Model (30 topics)",
+    "eng_k15": "15 Topics",
+    "eng_k5": "5 Topics"
+};
 
 const COLORS = [
     "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
@@ -153,18 +140,12 @@ function formatTopicName(name) {
     return name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function getModel(id) {
-    return models.find(m => m.model_id === id);
-}
-
 let chartA, chartB;
 
 function buildColourMap(topicsA, topicsB) {
-    // Assign colours to shared topics, grey to unique
     const namesA = new Set(topicsA.map(t => t.name));
     const namesB = new Set(topicsB.map(t => t.name));
     const shared = [...namesA].filter(n => namesB.has(n));
-
     const colourMap = {};
     shared.forEach((name, i) => {
         colourMap[name] = COLORS[i % COLORS.length];
@@ -208,52 +189,29 @@ function renderChart(canvasId, topics, colourMap, existingChart) {
     });
 }
 
-function renderTopicList(topics, containerId, colourMap) {
-    const el = document.getElementById(containerId);
-    el.innerHTML = topics.map(t => {
-        const colour = colourMap[t.name];
-        const isShared = !!colour;
-        return `<div class="topic-row ${isShared ? 'topic-shared' : 'topic-unique'}" style="${isShared ? 'border-left-color:'+colour : ''}">
-            <strong>${formatTopicName(t.name)}</strong>${isShared ? ' <span style="color:'+colour+';font-size:0.7rem;font-weight:700;">SHARED</span>' : ''}
-            <span class="topic-meta">${t.article_count} articles (${t.pct}%)</span>
-        </div>`;
-    }).join("");
-}
-
 function updateComparison() {
     const idA = document.getElementById("modelA").value;
     const idB = document.getElementById("modelB").value;
-    const mA = getModel(idA);
-    const mB = getModel(idB);
     const topicsA = allTopics[idA] || [];
     const topicsB = allTopics[idB] || [];
 
-    // Labels
     document.getElementById("labelA").textContent = MODEL_LABELS[idA] || idA;
     document.getElementById("labelB").textContent = MODEL_LABELS[idB] || idB;
 
-    // Colour map — shared topics get same colour
     const colourMap = buildColourMap(topicsA, topicsB);
     const sharedCount = Object.keys(colourMap).length;
     const maxTopics = Math.max(topicsA.length, topicsB.length);
     const pct = maxTopics > 0 ? Math.round(sharedCount / maxTopics * 100) : 0;
 
-    // Summary
     document.getElementById("summaryText").innerHTML =
         idA === idB
             ? "You're comparing the same model. Select two different models to see what changes."
-            : `<strong>${sharedCount}</strong> topics are shared (shown in colour). <strong>${topicsA.length - sharedCount}</strong> topics exist only in Model 1, <strong>${topicsB.length - sharedCount}</strong> only in Model 2. Only <strong>${pct}%</strong> of topics are preserved across this specification change.`;
+            : `<strong>${sharedCount}</strong> topics are shared (shown in colour). Only <strong>${pct}%</strong> of topics are preserved when you change from ${MODEL_LABELS[idA]} to ${MODEL_LABELS[idB]}.`;
 
-    // Charts
     chartA = renderChart("chartA", topicsA, colourMap, chartA);
     chartB = renderChart("chartB", topicsB, colourMap, chartB);
-
-    // Topic lists
-    renderTopicList(topicsA, "topicsA", colourMap);
-    renderTopicList(topicsB, "topicsB", colourMap);
 }
 
-// Initial render
 updateComparison();
 </script>
 {% endblock %}
