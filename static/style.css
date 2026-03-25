@@ -118,6 +118,30 @@ body {
   border-bottom-color: var(--ocean);
 }
 
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  align-self: center;
+  margin: 0 0.25rem;
+}
+
+.nav-group-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  align-self: center;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.nav-sub {
+  font-size: 0.8rem;
+  padding: 1rem 1rem;
+}
+
 /* ── Main Content ─────────────────────────────────────────────────── */
 .main {
   max-width: 1400px;
@@ -219,6 +243,9 @@ body {
   border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .stat-card:hover {

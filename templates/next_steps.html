@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set active = "next-steps" %}
+
+{% block title %}AtlasED — Next Steps{% endblock %}
+
+{% block body %}
+<h1 class="page-title">Next Steps</h1>
+<p class="page-desc">
+    From demonstration to deployment — the technical details and the roadmap ahead.
+</p>
+
+<h2 class="section-title">Data & Methods</h2>
+<div class="card">
+    <div class="card-title">Technical Specification</div>
+    <div class="card-body">
+        <p><strong>Period:</strong> January 2023 – September 2025</p>
+        <p><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</p>
+        <p><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</p>
+        <p><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</p>
+        <p><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</p>
+        <p><strong>Election split:</strong> 2024-07-04 (UK General Election)</p>
+    </div>
+</div>
+
+<h2 class="section-title">From Demonstration to Deployment</h2>
+<div class="card">
+    <div class="card-body">
+        <p>
+            <strong>Immediate:</strong> Use this dashboard in stakeholder workshops to demonstrate the principle.
+            Gather feedback from policymakers, engineers, and affected communities.
+        </p>
+        <p>
+            <strong>Short-term:</strong> Develop the SpecCheck library with three core metrics: specification
+            reproducibility, finding stability, and disclosure completeness.
+        </p>
+        <p>
+            <strong>Long-term:</strong> Establish SpecCheck as a standard practice in high-stakes AI deployment —
+            alongside fairness testing, adversarial robustness, and interpretability.
+        </p>
+    </div>
+</div>
+{% endblock %}

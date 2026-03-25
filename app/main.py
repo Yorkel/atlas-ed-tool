@@ -32,15 +32,24 @@ async def overview(request: Request):
     })
 
 
-# ── Page 2: Topics & Trends ──────────────────────────────────────────
+# ── Page 2a: Explore Topics ───────────────────────────────────────────
 @app.get("/topics", response_class=HTMLResponse)
-async def topics_and_trends(request: Request):
+async def explore_topics(request: Request):
     topics = queries.get_topics(BASELINE_MODEL)
     return templates.TemplateResponse("topics.html", {
         "request": request,
         "topics": topics,
-        "election_date": ELECTION_DATE,
         "source_types": list(queries.SOURCES_BY_TYPE.keys()),
+    })
+
+
+# ── Page 2b: Explore Trends ──────────────────────────────────────────
+@app.get("/trends", response_class=HTMLResponse)
+async def explore_trends(request: Request):
+    topics = queries.get_topics(BASELINE_MODEL)
+    return templates.TemplateResponse("trends.html", {
+        "request": request,
+        "topics": topics,
     })
 
 
@@ -90,10 +99,18 @@ async def ask_the_data(request: Request):
     })
 
 
-# ── Page 5: Implications ─────────────────────────────────────────────
-@app.get("/implications", response_class=HTMLResponse)
-async def implications(request: Request):
+# ── Page 5a: Responsible AI Use ───────────────────────────────────────
+@app.get("/responsible-ai", response_class=HTMLResponse)
+async def responsible_ai(request: Request):
     return templates.TemplateResponse("implications.html", {
+        "request": request,
+    })
+
+
+# ── Page 5b: Next Steps ──────────────────────────────────────────────
+@app.get("/next-steps", response_class=HTMLResponse)
+async def next_steps(request: Request):
+    return templates.TemplateResponse("next_steps.html", {
         "request": request,
     })
 

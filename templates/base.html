@@ -36,10 +36,18 @@
 <nav class="nav">
     <div class="nav-content">
         <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
-        <a href="/topics" class="nav-link {% if active == 'topics' %}active{% endif %}">Topics &amp; Trends</a>
-        <a href="/sensitivity" class="nav-link {% if active == 'sensitivity' %}active{% endif %}">Model Sensitivity</a>
-        <a href="/ask" class="nav-link {% if active == 'ask' %}active{% endif %}">Ask the Data</a>
-        <a href="/implications" class="nav-link {% if active == 'implications' %}active{% endif %}">Implications</a>
+        <span class="nav-divider"></span>
+        <span class="nav-group-label">Explore the Data</span>
+        <a href="/topics" class="nav-link nav-sub {% if active == 'topics' %}active{% endif %}">Topics</a>
+        <a href="/trends" class="nav-link nav-sub {% if active == 'trends' %}active{% endif %}">Trends</a>
+        <span class="nav-divider"></span>
+        <span class="nav-group-label">Question the Choices</span>
+        <a href="/sensitivity" class="nav-link nav-sub {% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
+        <a href="/ask" class="nav-link nav-sub {% if active == 'ask' %}active{% endif %}">Interrogate the Data</a>
+        <span class="nav-divider"></span>
+        <span class="nav-group-label">Implications</span>
+        <a href="/responsible-ai" class="nav-link nav-sub {% if active == 'responsible-ai' %}active{% endif %}">Responsible AI</a>
+        <a href="/next-steps" class="nav-link nav-sub {% if active == 'next-steps' %}active{% endif %}">Next Steps</a>
     </div>
 </nav>
 
