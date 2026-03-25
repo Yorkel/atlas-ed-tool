@@ -2,86 +2,127 @@
 {% set active = "sensitivity" %}
 
 {% block title %}AtlasED — Specification Sensitivity{% endblock %}
-{% block heading %}Specification Sensitivity{% endblock %}
-{% block description %}How model specification choices shape topic modelling outputs{% endblock %}
 
 {% block body %}
+<div class="page-label">Specification Sensitivity</div>
+<h1 class="page-title">What Changes When Specifications Change?</h1>
+<p class="page-desc">
+    Specification choices like topic count and dataset composition influence the model.
+    Users can explore different configurations and see how outputs change — and how this compares
+    to the baseline model.
+</p>
+
 <div class="stepper">
-    <div class="step active" data-step="1">
-        <span class="step-num">1</span> Configure
+    <div class="step active" data-step="STEP 1" onclick="goStep(1)">
+        <div class="step-title">Configure Model</div>
+        <div class="step-desc">Choose topic count and source composition</div>
     </div>
-    <div class="step" data-step="2">
-        <span class="step-num">2</span> View Results
+    <div class="step" data-step="STEP 2" onclick="goStep(2)">
+        <div class="step-title">View Results</div>
+        <div class="step-desc">See what your chosen model finds</div>
     </div>
-    <div class="step" data-step="3">
-        <span class="step-num">3</span> Compare
+    <div class="step" data-step="STEP 3" onclick="goStep(3)">
+        <div class="step-title">Compare to Baseline</div>
+        <div class="step-desc">What changed? What stayed the same?</div>
     </div>
 </div>
 
-<!-- Step 1: Configure -->
-<section class="step-panel" id="step1">
-    <h2>Choose a model to explore</h2>
+<!-- Step 1: Configuration -->
+<div id="step-1" class="step-content">
+    <h2 class="section-title">Model Configuration</h2>
     <div class="model-cards">
         {% for m in models %}
         <div class="model-card {% if m.model_id == baseline %}selected{% endif %}"
              onclick="selectModel('{{ m.model_id }}')" id="card-{{ m.model_id }}">
             <h3>{{ m.model_id }}</h3>
-            <p>k = {{ m.k }} &middot; {{ m.n_articles }} articles</p>
+            <p>k = {{ m.k }} &middot; {{ "{:,}".format(m.n_articles) }} articles</p>
             <p>Corpus: {{ m.corpus_type }}</p>
             <p>Stability: {{ m.stability }}</p>
         </div>
         {% endfor %}
     </div>
-    <button class="btn" onclick="goStep(2)">View Results &rarr;</button>
-</section>
 
-<!-- Step 2: View Results -->
-<section class="step-panel hidden" id="step2">
-    <h2>Topics for <span id="selectedModelName">{{ baseline }}</span></h2>
-    <div id="topicsList"></div>
-    <button class="btn" onclick="goStep(1)">&larr; Back</button>
-    <button class="btn" onclick="goStep(3)">Compare to Baseline &rarr;</button>
-</section>
+    <div class="callout callout-info" id="config-hint">
+        <span class="callout-label">Current Selection</span>
+        <span id="hintText"><strong>{{ baseline }}</strong> — This is the baseline production model.
+        Select a different model above to see how findings change.</span>
+    </div>
+</div>
 
-<!-- Step 3: Compare -->
-<section class="step-panel hidden" id="step3">
-    <h2>Comparison: <span id="compareLabel"></span></h2>
+<!-- Step 2: Results -->
+<div id="step-2" class="step-content hidden">
+    <h2 class="section-title">Topics for <span id="selectedModelName">{{ baseline }}</span></h2>
+
+    <div id="resultsMetrics" class="stats-grid"></div>
+
+    <div class="chart-container">
+        <div class="chart-header">
+            <h3 class="chart-title">Top 10 Topics</h3>
+            <p class="chart-subtitle" id="results-subtitle">Your model's results</p>
+        </div>
+        <canvas id="chart-results"></canvas>
+    </div>
+
+    <div id="topicsList" style="margin-top:1.5rem;"></div>
+</div>
+
+<!-- Step 3: Comparison -->
+<div id="step-3" class="step-content hidden">
+    <h2 class="section-title">Comparison: <span id="compareLabel"></span></h2>
     <div class="compare-grid">
-        <div>
-            <h3 id="leftLabel">{{ baseline }}</h3>
+        <div class="comparison-panel">
+            <div class="comparison-label" id="leftLabel">{{ baseline }}</div>
             <div id="leftTopics"></div>
         </div>
-        <div>
-            <h3 id="rightLabel"></h3>
+        <div class="comparison-panel">
+            <div class="comparison-label" id="rightLabel"></div>
             <div id="rightTopics"></div>
         </div>
     </div>
-    <button class="btn" onclick="goStep(2)">&larr; Back</button>
-</section>
+    <div class="comparison-summary" id="comp-summary">
+        <strong>Insight:</strong> <span id="compInsight">Select a different model to see how findings diverge from the baseline.</span>
+    </div>
+</div>
 
-<section class="card" style="margin-top:2rem">
-    <h2>Key Findings</h2>
+<h2 class="section-title">Key Findings</h2>
+<div class="chart-container">
     <table class="data-table">
         <thead><tr><th>k</th><th>Stability</th><th>Single-source topics</th><th>Observation</th></tr></thead>
         <tbody>
             <tr><td>5</td><td>1.000</td><td>60%</td><td>One catch-all topic holds 49% of articles. Minority sources invisible.</td></tr>
-            <tr><td>15</td><td>1.000</td><td>40%</td><td>RAAC and breakfast clubs disappear. FFT/EPI first visible.</td></tr>
+            <tr><td>15</td><td>1.000</td><td>40%</td><td>RAAC and breakfast clubs disappear. FFT/EPI first become visible.</td></tr>
             <tr><td>30</td><td>0.966</td><td>47%</td><td>Maximum granularity. Multiple plausible solutions emerge.</td></tr>
         </tbody>
     </table>
-</section>
+</div>
+
+<div class="callout callout-warning">
+    <span class="callout-label">The Core Finding</span>
+    <strong>k is a volume knob for minority sources</strong> — as k increases, smaller voices
+    (FFT, EPI, Nuffield) become audible in topics shaped for them.
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
 const allTopics = {{ all_topics_json | safe }};
+const models = {{ models | tojson }};
 const baseline = "{{ baseline }}";
 let selectedModel = baseline;
+let resultsChart;
 
 function selectModel(id) {
     document.querySelectorAll(".model-card").forEach(c => c.classList.remove("selected"));
     document.getElementById("card-" + id).classList.add("selected");
     selectedModel = id;
+
+    const m = models.find(m => m.model_id === id);
+    const hint = document.getElementById("hintText");
+    if (id === baseline) {
+        hint.innerHTML = `<strong>${id}</strong> — This is the baseline production model. Select a different model to see how findings change.`;
+    } else {
+        hint.innerHTML = `<strong>${id}</strong> — k=${m.k}, ${m.corpus_type} corpus, ${m.n_articles.toLocaleString()} articles. Click Step 2 to view results.`;
+    }
 }
 
 function renderTopics(topics, container) {
@@ -94,23 +135,71 @@ function renderTopics(topics, container) {
     ).join("");
 }
 
+function renderResultsChart(topics) {
+    const top10 = topics.slice(0, 10);
+    const ctx = document.getElementById("chart-results").getContext("2d");
+    if (resultsChart) resultsChart.destroy();
+    resultsChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: top10.map(t => t.name),
+            datasets: [{
+                label: "Articles",
+                data: top10.map(t => t.article_count),
+                backgroundColor: "#0369A1",
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false } },
+                y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+            }
+        }
+    });
+}
+
 function goStep(n) {
-    document.querySelectorAll(".step-panel").forEach(p => p.classList.add("hidden"));
-    document.getElementById("step" + n).classList.remove("hidden");
+    document.querySelectorAll(".step-content").forEach(p => p.classList.add("hidden"));
+    document.getElementById("step-" + n).classList.remove("hidden");
     document.querySelectorAll(".step").forEach(s => {
-        s.classList.toggle("active", parseInt(s.dataset.step) === n);
+        s.classList.toggle("active", s.dataset.step === "STEP " + n);
     });
 
     if (n === 2) {
+        const topics = allTopics[selectedModel] || [];
+        const m = models.find(m => m.model_id === selectedModel);
         document.getElementById("selectedModelName").textContent = selectedModel;
-        renderTopics(allTopics[selectedModel] || [], "topicsList");
+        document.getElementById("results-subtitle").textContent = `${selectedModel}: k=${m.k}, ${m.corpus_type} corpus`;
+
+        document.getElementById("resultsMetrics").innerHTML = `
+            <div class="stat-card"><div class="stat-value">${m.k}</div><div class="stat-label">Topics (k)</div></div>
+            <div class="stat-card"><div class="stat-value">${m.n_articles.toLocaleString()}</div><div class="stat-label">Articles</div></div>
+            <div class="stat-card"><div class="stat-value">${m.stability}</div><div class="stat-label">Stability</div></div>
+            <div class="stat-card"><div class="stat-value">${m.mean_weight}</div><div class="stat-label">Mean Weight</div></div>
+        `;
+
+        renderResultsChart(topics);
+        renderTopics(topics, "topicsList");
     }
     if (n === 3) {
-        document.getElementById("compareLabel").textContent = `${baseline} vs ${selectedModel}`;
-        document.getElementById("leftLabel").textContent = baseline;
-        document.getElementById("rightLabel").textContent = selectedModel;
-        renderTopics(allTopics[baseline] || [], "leftTopics");
-        renderTopics(allTopics[selectedModel] || [], "rightTopics");
+        document.getElementById("compareLabel").textContent = `${selectedModel} vs ${baseline}`;
+        document.getElementById("leftLabel").textContent = selectedModel;
+        document.getElementById("rightLabel").textContent = baseline + " (baseline)";
+        renderTopics(allTopics[selectedModel] || [], "leftTopics");
+        renderTopics(allTopics[baseline] || [], "rightTopics");
+
+        const selTopics = (allTopics[selectedModel] || []).map(t => t.name);
+        const baseTopics = (allTopics[baseline] || []).map(t => t.name);
+        const shared = selTopics.filter(n => baseTopics.includes(n));
+        const pct = baseTopics.length ? Math.round(shared.length / baseTopics.length * 100) : 0;
+        document.getElementById("compInsight").textContent =
+            selectedModel === baseline
+                ? "Select a different model in Step 1 to compare."
+                : `${shared.length} of ${baseTopics.length} baseline topics (${pct}%) are preserved. ${baseTopics.length - shared.length} topics changed.`;
     }
 }
 </script>

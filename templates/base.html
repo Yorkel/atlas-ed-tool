@@ -4,33 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AtlasED{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <nav class="sidebar">
+
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
         <div class="logo">
-            <h2>AtlasED</h2>
-            <span class="subtitle">Specification Transparency</span>
+            <span class="logo-text">AtlasED</span>
+            <div class="logo-sep"></div>
+            <span class="logo-tag">Spec Transparency</span>
         </div>
-        <ul>
-            <li><a href="/" class="{% if active == 'overview' %}active{% endif %}">Overview</a></li>
-            <li><a href="/topics" class="{% if active == 'topics' %}active{% endif %}">Topics &amp; Trends</a></li>
-            <li><a href="/sensitivity" class="{% if active == 'sensitivity' %}active{% endif %}">Specification Sensitivity</a></li>
-            <li><a href="/ask" class="{% if active == 'ask' %}active{% endif %}">Ask the Data</a></li>
-            <li><a href="/implications" class="{% if active == 'implications' %}active{% endif %}">Implications</a></li>
-        </ul>
-    </nav>
-    <main class="content">
-        <header class="page-header">
-            <h1>{% block heading %}{% endblock %}</h1>
-            <p class="page-desc">{% block description %}{% endblock %}</p>
-        </header>
-        <div class="page-body">
-            {% block body %}{% endblock %}
-        </div>
-    </main>
-    {% block scripts %}{% endblock %}
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav-content">
+        <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
+        <a href="/topics" class="nav-link {% if active == 'topics' %}active{% endif %}">Topics &amp; Trends</a>
+        <a href="/sensitivity" class="nav-link {% if active == 'sensitivity' %}active{% endif %}">Specification Sensitivity</a>
+        <a href="/ask" class="nav-link {% if active == 'ask' %}active{% endif %}">Ask the Data</a>
+        <a href="/implications" class="nav-link {% if active == 'implications' %}active{% endif %}">Implications</a>
+    </div>
+</nav>
+
+<!-- Prototype Banner -->
+<div class="prototype-banner">
+    <strong>Prototype:</strong> This dashboard is in active development. Data and features may change.
+</div>
+
+<!-- Main Content -->
+<main class="main">
+    {% block body %}{% endblock %}
+</main>
+
+<script>
+Chart.defaults.font.family = "'DM Sans', -apple-system, system-ui, sans-serif";
+Chart.defaults.font.size = 13;
+Chart.defaults.color = '#6B7280';
+</script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

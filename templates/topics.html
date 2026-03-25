@@ -2,35 +2,75 @@
 {% set active = "topics" %}
 
 {% block title %}AtlasED — Topics & Trends{% endblock %}
-{% block heading %}Topics & Trends{% endblock %}
-{% block description %}Monthly topic trends with election marker ({{ election_date }}){% endblock %}
 
 {% block body %}
-<div class="controls">
-    <label for="modelSelect">Model:</label>
-    <select id="modelSelect" onchange="location.href='/topics?model_id='+this.value">
-        {% for m in models %}
-        <option value="{{ m.model_id }}" {% if m.model_id == model_id %}selected{% endif %}>
-            {{ m.model_id }} (k={{ m.k }})
-        </option>
-        {% endfor %}
-    </select>
+<div class="page-label">Temporal Analysis</div>
+<h1 class="page-title">Topics & Trends Over Time</h1>
+<p class="page-desc">
+    This is what the baseline model (k=30, full corpus) finds. These are meaningful results for
+    decision-makers. But the question SpecCheck asks is: <em>how much of this depends on the choices
+    I made to get here?</em>
+</p>
 
-    <label for="topicSelect">Topics:</label>
-    <select id="topicSelect" multiple size="6">
-        {% for t in topics %}
-        <option value="{{ t.topic_num }}" selected>{{ t.name }}</option>
-        {% endfor %}
-    </select>
-    <button onclick="updateChart()">Update</button>
+<div class="event-banner">
+    <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
 </div>
 
-<section class="card">
-    <canvas id="trendsChart" height="120"></canvas>
-</section>
+<h2 class="section-title">Top Topics by Volume</h2>
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title">10 Largest Topics (by article count)</h3>
+        <p class="chart-subtitle">SEND, teacher workforce, and Ofsted reform dominate the policy conversation</p>
+    </div>
+    <canvas id="chart-topics-bar"></canvas>
+    <p class="chart-annotation">
+        These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of these
+        topics disappear. That's not a quality issue — it's a specification sensitivity issue.
+    </p>
+</div>
 
-<section class="card">
-    <h2>Topic Details</h2>
+<h2 class="section-title">Temporal Patterns</h2>
+
+<div class="controls">
+    <div class="control-group">
+        {% for m in models %}
+        <button class="control-btn {% if m.model_id == model_id %}active{% endif %}"
+                onclick="location.href='/topics?model_id={{ m.model_id }}'">
+            {{ m.model_id }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title">Selected Topics Over Time</h3>
+        <p class="chart-subtitle">Use the topic selector below the chart to filter. The July 2024 election provides a natural experiment.</p>
+    </div>
+    <canvas id="chart-trends"></canvas>
+    <p class="chart-annotation">
+        Topics that shift pre/post election reveal how discourse responds to political events —
+        but this also means the model's findings have a shelf life.
+    </p>
+</div>
+
+<div class="controls" style="flex-wrap: wrap; gap: 0.5rem;">
+    <select id="topicSelect" multiple size="8" style="width:100%; max-width:500px; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-family:inherit; font-size:0.85rem;">
+        {% for t in topics %}
+        <option value="{{ t.topic_num }}" selected>{{ t.name }} ({{ t.article_count }})</option>
+        {% endfor %}
+    </select>
+    <button class="control-btn active" onclick="updateChart()" style="border:1px solid var(--ocean); border-radius:6px;">Update Chart</button>
+</div>
+
+<div class="callout callout-info">
+    <span class="callout-label">Temporal Context as Specification</span>
+    "When was this model trained?" matters as much as "what k was used?" — and no deployed system discloses this.
+    A topic model trained on 2023–2024 data describes a different policy landscape than one trained on 2024–2025.
+</div>
+
+<h2 class="section-title">Topic Details</h2>
+<div class="chart-container" style="overflow-x:auto;">
     <table class="data-table">
         <thead>
             <tr>
@@ -45,58 +85,95 @@
                 <td>{{ t.article_count }}</td>
                 <td>{{ t.pct }}%</td>
                 <td>{{ t.top_source }}{% if t.single_source %} *{% endif %}</td>
-                <td>{{ t.top_keywords | join(", ") if t.top_keywords else "" }}</td>
+                <td style="font-size:0.8rem; color:var(--text-muted);">{{ t.top_keywords | join(", ") if t.top_keywords else "" }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-</section>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-const ELECTION_DATE = "{{ election_date }}";
 const timeseries = {{ timeseries_json | safe }};
 const COLORS = [
-    "#2563eb","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899",
+    "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
     "#6366f1","#14b8a6","#f97316","#06b6d4","#84cc16","#e11d48",
     "#7c3aed","#0ea5e9","#d946ef","#facc15","#22d3ee","#a3e635",
     "#fb7185","#38bdf8","#4ade80","#c084fc","#fbbf24","#34d399",
     "#f472b6","#60a5fa","#a78bfa","#2dd4bf","#fb923c","#818cf8"
 ];
 
-let chart;
+// Top 10 topics bar chart
+const topics = {{ topics | tojson }};
+const top10 = topics.slice(0, 10);
+new Chart(document.getElementById("chart-topics-bar"), {
+    type: "bar",
+    data: {
+        labels: top10.map(t => t.name),
+        datasets: [{
+            label: "Articles",
+            data: top10.map(t => t.article_count),
+            backgroundColor: "#0369A1",
+            borderRadius: 4
+        }]
+    },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${top10[ctx.dataIndex].pct}%)`
+                }
+            }
+        },
+        scales: {
+            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
+            y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+        }
+    }
+});
+
+// Trends line chart
+let trendsChart;
 
 function buildChart(data) {
     const grouped = {};
     data.forEach(r => {
         if (!grouped[r.topic_name]) grouped[r.topic_name] = [];
-        grouped[r.topic_name].push({ x: `${r.year}-${String(r.month).padStart(2,'0')}`, y: r.article_count });
+        grouped[r.topic_name].push({
+            x: `${r.year}-${String(r.month).padStart(2,'0')}`,
+            y: r.article_count
+        });
     });
 
     const datasets = Object.entries(grouped).map(([name, points], i) => ({
         label: name,
         data: points,
         borderColor: COLORS[i % COLORS.length],
-        fill: false,
+        backgroundColor: COLORS[i % COLORS.length] + '18',
+        fill: true,
         tension: 0.3,
         pointRadius: 2
     }));
 
-    const ctx = document.getElementById("trendsChart").getContext("2d");
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
+    const ctx = document.getElementById("chart-trends").getContext("2d");
+    if (trendsChart) trendsChart.destroy();
+    trendsChart = new Chart(ctx, {
         type: "line",
         data: { datasets },
         options: {
             responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: "top", labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
+            },
             scales: {
                 x: { type: "category", title: { display: true, text: "Month" } },
-                y: { title: { display: true, text: "Articles" }, beginAtZero: true }
-            },
-            plugins: {
-                annotation: undefined,
-                legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } }
+                y: { beginAtZero: true, title: { display: true, text: "Articles per Month" } }
             }
         }
     });

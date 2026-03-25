@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtlasED – Specification Transparency in Education Policy Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0A1628;
+  --slate: #1E293B;
+  --ocean: #0369A1;
+  --sky: #38BDF8;
+  --amber: #F59E0B;
+  --rust: #DC2626;
+  --bg: #FAFBFC;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --text-primary: #1A1D23;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* Header */
+.header {
+  background: var(--navy);
+  color: white;
+  padding: 1.2rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo-sep {
+  width: 2px;
+  height: 24px;
+  background: var(--amber);
+  opacity: 0.6;
+}
+
+.logo-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sky);
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Navigation */
+.nav {
+  background: white;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+}
+
+.nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-content::-webkit-scrollbar { display: none; }
+
+.nav-link {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg);
+}
+
+.nav-link.active {
+  color: var(--ocean);
+  border-bottom-color: var(--ocean);
+}
+
+/* Main Content */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.page { display: none; }
+.page.active { 
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+.page-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ocean);
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.page-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 72ch;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1rem;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.card-body {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.stat-value {
+  font-family: 'Source Serif 4', serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.stat-detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* Callout Boxes */
+.callout {
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid;
+  margin: 1.5rem 0;
+  line-height: 1.7;
+}
+
+.callout-info {
+  background: rgba(3, 105, 161, 0.05);
+  border-color: var(--ocean);
+  color: var(--text-primary);
+}
+
+.callout-warning {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: var(--amber);
+}
+
+.callout-critical {
+  background: rgba(220, 38, 38, 0.05);
+  border-color: var(--rust);
+}
+
+.callout-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.callout-info .callout-label { color: var(--ocean); }
+.callout-warning .callout-label { color: var(--amber); }
+.callout-critical .callout-label { color: var(--rust); }
+
+/* Chart Container */
+.chart-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.chart-header {
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.chart-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.chart-canvas {
+  max-height: 400px;
+}
+
+.chart-annotation {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+
+.control-group {
+  display: flex;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.control-btn {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: white;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.control-btn:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.control-btn:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.control-btn.active {
+  background: var(--ocean);
+  color: white;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.step {
+  flex: 1;
+  min-width: 200px;
+  padding: 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.step::before {
+  content: attr(data-step);
+  position: absolute;
+  top: -12px;
+  left: 1rem;
+  background: white;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.step:hover {
+  border-color: var(--ocean);
+}
+
+.step.active {
+  border-color: var(--ocean);
+  border-width: 3px;
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15);
+}
+
+.step.active::before {
+  color: var(--ocean);
+}
+
+.step-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.step-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* RAG Chatbot */
+.rag-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.rag-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rag-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 3px solid;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rag-panel:nth-child(1) .rag-header {
+  background: rgba(3, 105, 161, 0.05);
+  border-color: var(--ocean);
+  color: var(--ocean);
+}
+
+.rag-panel:nth-child(2) .rag-header {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.rag-body {
+  padding: 1.5rem;
+  min-height: 300px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.rag-input-container {
+  margin-bottom: 2rem;
+}
+
+.rag-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.rag-input:focus {
+  outline: none;
+  border-color: var(--ocean);
+}
+
+.rag-btn {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--ocean);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.rag-btn:hover:not(:disabled) {
+  background: #0284C7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
+}
+
+.rag-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.typing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.typing::after {
+  content: '...';
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Comparison Grid */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.comparison-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.comparison-panel:nth-child(1) {
+  border-left-color: var(--rust);
+}
+
+.comparison-panel:nth-child(2) {
+  border-left-color: var(--ocean);
+}
+
+.comparison-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.comparison-panel:nth-child(1) .comparison-label {
+  color: var(--rust);
+}
+
+.comparison-panel:nth-child(2) .comparison-label {
+  color: var(--ocean);
+}
+
+.comparison-finding {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.comparison-detail {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.comparison-summary {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(3, 105, 161, 0.05);
+  border-left: 4px solid var(--ocean);
+  border-radius: 4px;
+}
+
+.comparison-summary strong {
+  color: var(--ocean);
+  font-weight: 700;
+}
+
+/* Event Banner */
+.event-banner {
+  background: var(--navy);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-banner::before {
+  content: '📌';
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .rag-container,
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .main {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Loading state */
+.hidden { display: none; }
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <span class="logo-text">AtlasED</span>
+      <div class="logo-sep"></div>
+      <span class="logo-tag">Spec Transparency</span>
+    </div>
+  </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-content">
+    <a class="nav-link active" data-page="overview">Overview</a>
+    <a class="nav-link" data-page="topics">Topics & Trends</a>
+    <a class="nav-link" data-page="sensitivity">Specification Sensitivity</a>
+    <a class="nav-link" data-page="rag">Ask the Data</a>
+    <a class="nav-link" data-page="implications">Implications</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Page 1: Overview -->
+  <div class="page active" id="overview">
+    <div class="page-label">Production System</div>
+    <h1 class="page-title">Making AI Pipeline Choices Visible</h1>
+    <p class="page-desc">
+      Every AI pipeline makes choices that determine what it finds. These choices are invisible. 
+      AtlasED makes them visible and testable. This is a production NLP system analysing education 
+      policy documents across England—with every specification choice disclosed and every finding contestable.
+    </p>
+
+    <div class="callout callout-info">
+      <span class="callout-label">Why This Matters</span>
+      This tool will be used to run workshops with policy stakeholders to discuss how AI outputs 
+      should be used in high-stakes decision-making. When a model tells you "SEND is the largest 
+      education issue," you need to know: is that real, or is that a choice I made when I set k=30?
+    </div>
+
+    <h2 class="section-title">System Overview</h2>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">3,931</div>
+        <div class="stat-label">Total Documents Analysed</div>
+        <div class="stat-detail">Jan 2023 – Mar 2025</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">30</div>
+        <div class="stat-label">Policy Topics Identified</div>
+        <div class="stat-detail">NMF, k=30, production model</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Source Organisations</div>
+        <div class="stat-detail">SchoolsWeek (70%) + Gov + Think Tanks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">27</div>
+        <div class="stat-label">Months of Coverage</div>
+        <div class="stat-detail">Spanning UK general election</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Source Distribution</h2>
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="chart-title">Articles by Source Organisation</h3>
+        <p class="chart-subtitle">SchoolsWeek dominates the corpus — but is that a problem or a design choice?</p>
+      </div>
+      <canvas id="chart-sources"></canvas>
+      <p class="chart-annotation">
+        SchoolsWeek provides 70% of the corpus. This concentration shapes every finding. 
+        The Specification Sensitivity page shows what happens when you remove it.
+      </p>
+    </div>
+
+    <h2 class="section-title">Why NMF?</h2>
+    <div class="card">
+      <div class="card-header">Model Choice Rationale</div>
+      <div class="card-title">Transparency Over Performance</div>
+      <div class="card-body">
+        <p style="margin-bottom: 1rem;">
+          I chose Non-negative Matrix Factorization (NMF) deliberately—not because it's the most 
+          sophisticated model, but because this project is about <strong>specification transparency</strong>, 
+          and NMF makes every modeling choice explicit and auditable.
+        </p>
+        <p style="margin-bottom: 1rem;">
+          The number of topics (<code>k</code>), the vocabulary preprocessing, the document weighting—these 
+          aren't hidden inside a neural network. They're parameters you set, and you can see what happens 
+          when you change them.
+        </p>
+        <p>
+          This approach scales. Today it's NMF on education documents. Tomorrow it could be transformer 
+          embeddings, RAG pipelines, or multimodal models—the principle stays the same: disclose the 
+          specification choices, show what changes when you perturb them, and let the user decide.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <span class="callout-label">The Core Finding</span>
+      No specification choice preserves more than 18% of topic names. Standard diagnostics cannot detect this. 
+      The only way to know is to perturb and compare. That's what the next pages show.
+    </div>
+  </div>
+
+  <!-- Page 2: Topics & Trends -->
+  <div class="page" id="topics">
+    <div class="page-label">Temporal Analysis</div>
+    <h1 class="page-title">Topics & Trends Over Time</h1>
+    <p class="page-desc">
+      This is what the baseline model (k=30, full corpus) finds. These are meaningful results for 
+      decision-makers. But the question SpecCheck asks is: <em>how much of this depends on the choices 
+      I made to get here?</em>
+    </p>
+
+    <div class="event-banner">
+      <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
+    </div>
+
+    <h2 class="section-title">Top Topics by Volume</h2>
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="chart-title">10 Largest Topics (by article count)</h3>
+        <p class="chart-subtitle">SEND, teacher workforce, and Ofsted reform dominate the policy conversation</p>
+      </div>
+      <canvas id="chart-topics"></canvas>
+      <p class="chart-annotation">
+        These rankings come from a specific model configuration. Change k from 30 to 15, and 13 of these 
+        topics disappear. That's not a quality issue—it's a specification sensitivity issue.
+      </p>
+    </div>
+
+    <h2 class="section-title">Temporal Patterns</h2>
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="chart-title">Selected Topics Over Time</h3>
+        <p class="chart-subtitle">Breakfast clubs spiked post-election. Teacher strikes declined. RAAC was event-driven.</p>
+      </div>
+      <canvas id="chart-trends"></canvas>
+      <p class="chart-annotation">
+        The July 2024 election provides a natural experiment. Topics that shift pre/post election reveal 
+        how discourse responds to political events—but this also means the model's findings have a shelf life.
+      </p>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-label">Temporal Context as Specification</span>
+      "When was this model trained?" matters as much as "what k was used?"—and no deployed system discloses this. 
+      A topic model trained on 2023–2024 data describes a different policy landscape than one trained on 2024–2025.
+    </div>
+  </div>
+
+  <!-- Page 3: Specification Sensitivity -->
+  <div class="page" id="sensitivity">
+    <div class="page-label">Specification Sensitivity</div>
+    <h1 class="page-title">What Changes When Specifications Change?</h1>
+    <p class="page-desc">
+      Specification choices like topic count and dataset composition influence the model. 
+      Users can explore different configurations and see how outputs change—and how this compares 
+      to the baseline model.
+    </p>
+
+    <div class="stepper">
+      <div class="step active" data-step="STEP 1" onclick="setStep(1)">
+        <div class="step-title">Configure Model</div>
+        <div class="step-desc">Choose topic count and source composition</div>
+      </div>
+      <div class="step" data-step="STEP 2" onclick="setStep(2)">
+        <div class="step-title">View Results</div>
+        <div class="step-desc">See what your chosen model finds</div>
+      </div>
+      <div class="step" data-step="STEP 3" onclick="setStep(3)">
+        <div class="step-title">Compare to Baseline</div>
+        <div class="step-desc">What changed? What stayed the same?</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Configuration -->
+    <div id="step-1" class="step-content">
+      <h2 class="section-title">Model Configuration</h2>
+      <div class="controls">
+        <div class="control-group">
+          <button class="control-btn" onclick="setK('k5')">k = 5</button>
+          <button class="control-btn" onclick="setK('k15')">k = 15</button>
+          <button class="control-btn active" onclick="setK('k30')">k = 30 (baseline)</button>
+        </div>
+        <div class="control-group">
+          <button class="control-btn active" onclick="setCorpus('full')">Full Corpus</button>
+          <button class="control-btn" onclick="setCorpus('nomedia')">No Media</button>
+        </div>
+      </div>
+      
+      <div class="callout callout-info" id="config-hint">
+        <span class="callout-label">Current Selection</span>
+        <strong>k=30, full corpus</strong> — This is the baseline production model. 
+        Change the settings above to see how findings change.
+      </div>
+    </div>
+
+    <!-- Step 2: Results -->
+    <div id="step-2" class="step-content hidden">
+      <h2 class="section-title">Your Model's Findings</h2>
+      <div id="results-metrics" class="stats-grid">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">Top 10 Topics</h3>
+          <p class="chart-subtitle" id="results-subtitle">Your model's results</p>
+        </div>
+        <canvas id="chart-results"></canvas>
+        <p class="chart-annotation" id="results-annotation">
+          <!-- Populated dynamically -->
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 3: Comparison -->
+    <div id="step-3" class="step-content hidden">
+      <h2 class="section-title">Comparison with Baseline</h2>
+      <div class="comparison-grid">
+        <div class="comparison-panel">
+          <div class="comparison-label" id="comp-your-label">Your Model — k=30</div>
+          <div class="comparison-finding" id="comp-your-finding">
+            Production model. Change settings in Step 1.
+          </div>
+          <div class="comparison-detail" id="comp-your-detail">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        <div class="comparison-panel">
+          <div class="comparison-label">Baseline — k=30, All Sources</div>
+          <div class="comparison-finding">
+            At k=30, that 49% splits into 8 distinct policy areas.
+          </div>
+          <div class="comparison-detail">
+            The model distinguishes SEND from absence from free school meals.
+          </div>
+        </div>
+      </div>
+      <div class="comparison-summary" id="comp-summary">
+        <strong>Insight:</strong> Change a specification choice to see how findings change.
+      </div>
+    </div>
+  </div>
+
+  <!-- Page 4: RAG Chatbot -->
+  <div class="page" id="rag">
+    <div class="page-label">Retrieval-Augmented Generation</div>
+    <h1 class="page-title">Ask the Data</h1>
+    <p class="page-desc">
+      Users can ask the model a question and see how the answer looks different for different corpus 
+      configurations. Same question, different documents retrieved, different answers. This demonstrates 
+      specification sensitivity in a modern LLM architecture.
+    </p>
+
+    <div class="callout callout-warning">
+      <span class="callout-label">What This Shows</span>
+      The same question produces different answers depending on which documents are retrieved. 
+      This is the most visually striking demonstration of specification sensitivity in the entire demo.
+    </div>
+
+    <div class="rag-input-container">
+      <input type="text" class="rag-input" id="rag-q" placeholder="Ask a question about education policy... (e.g., 'What are the main issues in SEND provision?')">
+      <button class="rag-btn" id="rag-btn" onclick="askRAG()">Ask Both Models</button>
+    </div>
+
+    <div class="rag-container">
+      <div class="rag-panel">
+        <div class="rag-header">Full Corpus (3,931 articles)</div>
+        <div class="rag-body" id="rag-full">
+          <em style="color: var(--text-muted);">Ask a question to see results from the full corpus model...</em>
+        </div>
+      </div>
+      <div class="rag-panel">
+        <div class="rag-header">No Media (1,190 articles)</div>
+        <div class="rag-body" id="rag-nm">
+          <em style="color: var(--text-muted);">Ask a question to see results from the no-media model...</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-critical">
+      <span class="callout-label">Critical Insight</span>
+      Both models use the same LLM (Claude Sonnet). Both pass quality checks. But the answers diverge 
+      because the <strong>retrieved context</strong> differs. This is specification sensitivity at the 
+      infrastructure level—invisible to the end user, determinative of the output.
+    </div>
+  </div>
+
+  <!-- Page 5: Implications -->
+  <div class="page" id="implications">
+    <div class="page-label">Future Vision</div>
+    <h1 class="page-title">From Demonstration to Methodology</h1>
+    <p class="page-desc">
+      This dashboard demonstrates specification sensitivity in one pipeline. The goal is to extend this 
+      approach into a formal tool that can be used in every pipeline, every domain, every high-stakes 
+      decision system.
+    </p>
+
+    <h2 class="section-title">The Vision: SpecCheck as a Standard</h2>
+    <div class="card">
+      <div class="card-title">From AtlasED to Universal Practice</div>
+      <div class="card-body">
+        <p style="margin-bottom: 1rem;">
+          SpecCheck becomes an open-source library with three standardized metrics, applicable to any 
+          analytical pipeline, running as a pre-deployment check, a CI job, or a runtime logging layer.
+        </p>
+        <p style="margin-bottom: 1rem;">
+          <strong>For Engineers:</strong> "Run SpecCheck before deployment" becomes as routine as "run tests." 
+          The library outputs a specification sensitivity report—a PDF or dashboard showing how findings vary 
+          across perturbations.
+        </p>
+        <p style="margin-bottom: 1rem;">
+          <strong>For Institutions:</strong> Every deployed model includes a SpecCheck disclosure—a public 
+          statement of the specification choices made and the sensitivity of findings to those choices.
+        </p>
+        <p>
+          <strong>For Affected Users:</strong> The basis to ask: "Would the decision have been different 
+          under a different specification?" This is contestability at the infrastructure level.
+        </p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Extending to Other Domains</h2>
+    <div class="stats-grid">
+      <div class="card">
+        <div class="card-header">Mental Health</div>
+        <div class="card-body">
+          Crisis detection models used by emergency services—where specification choices determine who gets 
+          flagged for intervention.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Climate Change</div>
+        <div class="card-body">
+          Policy analysis systems where the framing of "adaptation vs mitigation" depends on which sources 
+          are included.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Criminal Justice</div>
+        <div class="card-body">
+          Risk assessment tools where the choice of features and training data shapes life-changing decisions.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Financial Services</div>
+        <div class="card-body">
+          Credit scoring models where specification sensitivity could reveal discriminatory patterns.
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Why This Benefits Everyone</h2>
+    <div class="callout callout-info">
+      <span class="callout-label">For Researchers</span>
+      Specification sensitivity is not only a quality check. It is a discovery method. Every perturbation 
+      shown in this dashboard produced findings about the education system that were inaccessible from any 
+      single model run.
+    </div>
+
+    <div class="callout callout-warning">
+      <span class="callout-label">For Institutions</span>
+      Auditable evidence that specification choices were tested. When a decision is contested, the institution 
+      can show: "We tested this under five different specifications. Here's what changed and what stayed robust."
+    </div>
+
+    <div class="callout callout-critical">
+      <span class="callout-label">For Those Affected by Decisions</span>
+      The basis to ask whether the decision would have been different under a different specification. 
+      This is the foundation of meaningful AI contestability—not just "explain the output," but "show me 
+      what would change if the choices were different."
+    </div>
+
+    <h2 class="section-title">Next Steps</h2>
+    <div class="card">
+      <div class="card-title">From Demonstration to Deployment</div>
+      <div class="card-body">
+        <p style="margin-bottom: 1rem;">
+          <strong>Immediate:</strong> Use this dashboard in stakeholder workshops to demonstrate the principle. 
+          Gather feedback from policymakers, engineers, and affected communities.
+        </p>
+        <p style="margin-bottom: 1rem;">
+          <strong>Short-term:</strong> Develop the SpecCheck library with three core metrics: specification 
+          reproducibility, finding stability, and disclosure completeness.
+        </p>
+        <p>
+          <strong>Long-term:</strong> Establish SpecCheck as a standard practice in high-stakes AI deployment—
+          alongside fairness testing, adversarial robustness, and interpretability.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Navigation
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const pageId = link.getAttribute('data-page');
+    
+    // Update nav
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    
+    // Update pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  });
+});
+
+// Data
+const MODELS = {
+  k5: {
+    k: 5,
+    n: 3931,
+    stability: 1.0,
+    confidence: 0.092,
+    topics: [
+      {name: 'Child welfare & SEND (mega-topic)', count: 1938, pct: 49.3},
+      {name: 'Government regulatory notices', count: 412, pct: 10.5},
+      {name: 'SchoolsWeek politics & strikes', count: 389, pct: 9.9},
+      {name: 'Attainment & data', count: 298, pct: 7.6},
+      {name: 'Leadership & governance', count: 276, pct: 7.0}
+    ]
+  },
+  k15: {
+    k: 15,
+    n: 3931,
+    stability: 1.0,
+    confidence: 0.122,
+    topics: [
+      {name: 'SEND provision', count: 312, pct: 7.9},
+      {name: 'Teacher workforce (pay+recruitment merged)', count: 289, pct: 7.4},
+      {name: 'Ofsted inspection', count: 267, pct: 6.8},
+      {name: 'Academy governance', count: 245, pct: 6.2},
+      {name: 'School funding', count: 234, pct: 6.0},
+      {name: 'Pupil attainment', count: 198, pct: 5.0},
+      {name: 'Child welfare', count: 187, pct: 4.8},
+      {name: 'School absence', count: 176, pct: 4.5},
+      {name: 'Government notices', count: 165, pct: 4.2},
+      {name: 'Post-16 qualifications', count: 154, pct: 3.9}
+    ]
+  },
+  k30: {
+    k: 30,
+    n: 3931,
+    stability: 0.966,
+    confidence: 0.131,
+    topics: [
+      {name: 'SEND inclusion & council deficits', count: 386, pct: 9.8},
+      {name: 'Teacher recruitment', count: 248, pct: 6.3},
+      {name: 'Teacher pay', count: 241, pct: 6.1},
+      {name: 'Ofsted inspection reform', count: 236, pct: 6.0},
+      {name: 'Academy trust governance', count: 198, pct: 5.0},
+      {name: 'School funding pressures', count: 187, pct: 4.8},
+      {name: 'RAAC building crisis', count: 176, pct: 4.5},
+      {name: 'Breakfast clubs', count: 165, pct: 4.2},
+      {name: 'Teacher strikes', count: 154, pct: 3.9},
+      {name: 'EdTech & AI', count: 143, pct: 3.6}
+    ]
+  },
+  k30nm: {
+    k: 30,
+    n: 1190,
+    stability: 0.96,
+    confidence: 0.195,
+    topics: [
+      {name: 'Pupil attainment data', count: 84, pct: 7.1},
+      {name: 'Education system leadership', count: 76, pct: 6.4},
+      {name: 'Research & inequality', count: 75, pct: 6.3},
+      {name: 'Youth mental health', count: 69, pct: 5.8},
+      {name: 'ESFA notifications', count: 64, pct: 5.4},
+      {name: 'Post-16 qualifications', count: 62, pct: 5.2},
+      {name: 'Skills & workforce', count: 58, pct: 4.9},
+      {name: 'Teacher workforce', count: 55, pct: 4.6},
+      {name: 'Ofsted reform', count: 52, pct: 4.4},
+      {name: 'Pupil absence', count: 50, pct: 4.2}
+    ]
+  }
+};
+
+// Chart.js default config
+Chart.defaults.font.family = "'DM Sans', -apple-system, system-ui, sans-serif";
+Chart.defaults.font.size = 13;
+Chart.defaults.color = '#6B7280';
+
+// Page 1: Sources chart
+const ctxSources = document.getElementById('chart-sources').getContext('2d');
+new Chart(ctxSources, {
+  type: 'bar',
+  data: {
+    labels: ['SchoolsWeek', 'UK Government', 'FFT Datalab', 'EPI', 'FED', 'Nuffield'],
+    datasets: [{
+      label: 'Article Count',
+      data: [2741, 412, 298, 245, 235, 100],
+      backgroundColor: '#0369A1',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: { 
+        grid: { display: false },
+        ticks: { callback: value => value.toLocaleString() }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// Page 2: Topics chart
+const ctxTopics = document.getElementById('chart-topics').getContext('2d');
+new Chart(ctxTopics, {
+  type: 'bar',
+  data: {
+    labels: MODELS.k30.topics.map(t => t.name),
+    datasets: [{
+      label: 'Articles',
+      data: MODELS.k30.topics.map(t => t.count),
+      backgroundColor: '#0369A1',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${MODELS.k30.topics[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    scales: {
+      x: { 
+        grid: { display: false },
+        ticks: { callback: value => value.toLocaleString() }
+      },
+      y: { 
+        grid: { display: false },
+        ticks: { font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// Page 2: Trends chart
+const ctxTrends = document.getElementById('chart-trends').getContext('2d');
+new Chart(ctxTrends, {
+  type: 'line',
+  data: {
+    labels: ['Jan 23', 'Apr 23', 'Jul 23', 'Oct 23', 'Jan 24', 'Apr 24', 'Jul 24', 'Oct 24', 'Jan 25'],
+    datasets: [
+      {
+        label: 'Teacher Strikes',
+        data: [2, 8, 15, 12, 6, 3, 1, 0, 0],
+        borderColor: '#DC2626',
+        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+        tension: 0.3,
+        fill: true
+      },
+      {
+        label: 'Breakfast Clubs',
+        data: [0, 0, 1, 1, 2, 3, 18, 14, 8],
+        borderColor: '#F59E0B',
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        tension: 0.3,
+        fill: true
+      },
+      {
+        label: 'SEND Provision',
+        data: [4, 6, 7, 9, 11, 12, 13, 15, 14],
+        borderColor: '#0369A1',
+        backgroundColor: 'rgba(3, 105, 161, 0.1)',
+        tension: 0.3,
+        fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true } }
+    },
+    scales: {
+      y: { 
+        beginAtZero: true,
+        title: { display: true, text: 'Articles per Month' }
+      }
+    }
+  }
+});
+
+// Page 3: Specification sensitivity
+let currentConfig = { k: 'k30', corpus: 'full' };
+let currentStep = 1;
+
+function setK(k) {
+  if (currentConfig.corpus === 'nomedia' && k !== 'k30') {
+    return; // No-media only available at k=30
+  }
+  currentConfig.k = k;
+  updateConfigUI();
+}
+
+function setCorpus(corpus) {
+  if (corpus === 'nomedia') {
+    currentConfig.k = 'k30'; // Force k=30 for no-media
+  }
+  currentConfig.corpus = corpus;
+  updateConfigUI();
+}
+
+function updateConfigUI() {
+  // Update button states
+  document.querySelectorAll('.control-btn').forEach(btn => {
+    btn.classList.remove('active');
+    const onClick = btn.getAttribute('onclick');
+    if (onClick) {
+      if (onClick.includes(`'${currentConfig.k}'`) || onClick.includes(`'${currentConfig.corpus}'`)) {
+        btn.classList.add('active');
+      }
+    }
+  });
+  
+  // Update hint
+  const modelId = currentConfig.corpus === 'nomedia' ? 'k30nm' : currentConfig.k;
+  const hints = {
+    k5: 'k=5, full corpus — One catch-all topic holds 49% of articles. Topics become source proxies.',
+    k15: 'k=15, full corpus — RAAC, breakfast clubs, mental health, and 10 other topics disappear.',
+    k30: 'k=30, full corpus — Production baseline. SchoolsWeek contributes 70%.',
+    k30nm: 'k=30, no media — The debate without media framing. 18 of 30 topics changed.'
+  };
+  document.getElementById('config-hint').innerHTML = 
+    `<span class="callout-label">Current Selection</span>${hints[modelId]}`;
+}
+
+function setStep(step) {
+  currentStep = step;
+  
+  // Update stepper
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.toggle('active', i + 1 === step);
+  });
+  
+  // Show/hide step content
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`step-${i}`);
+    if (el) {
+      el.classList.toggle('hidden', i !== step);
+    }
+  }
+  
+  // Load step-specific content
+  if (step === 2) loadResults();
+  if (step === 3) loadComparison();
+}
+
+function loadResults() {
+  const modelId = currentConfig.corpus === 'nomedia' ? 'k30nm' : currentConfig.k;
+  const model = MODELS[modelId];
+  
+  // Update metrics
+  const stabilityLabels = { 1.0: 'Perfect', 0.966: 'High', 0.96: 'High' };
+  const confidenceLabels = { 0.092: 'Very Low', 0.122: 'Low', 0.131: 'Low–Moderate', 0.195: 'Moderate' };
+  
+  document.getElementById('results-metrics').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">${model.k}</div>
+      <div class="stat-label">Topics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${model.n.toLocaleString()}</div>
+      <div class="stat-label">Articles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${stabilityLabels[model.stability] || model.stability}</div>
+      <div class="stat-label">Reproducibility</div>
+      <div class="stat-detail">Stability: ${model.stability}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${confidenceLabels[model.confidence] || model.confidence}</div>
+      <div class="stat-label">Confidence</div>
+      <div class="stat-detail">Mean weight: ${model.confidence}</div>
+    </div>
+  `;
+  
+  // Update chart
+  const existingChart = Chart.getChart('chart-results');
+  if (existingChart) existingChart.destroy();
+  
+  const baselineTopics = MODELS.k30.topics.map(t => t.name);
+  
+  const ctxResults = document.getElementById('chart-results').getContext('2d');
+  new Chart(ctxResults, {
+    type: 'bar',
+    data: {
+      labels: model.topics.map(t => t.name),
+      datasets: [{
+        label: 'Percentage',
+        data: model.topics.map(t => t.pct),
+        backgroundColor: model.topics.map(t => 
+          baselineTopics.includes(t.name) ? '#0369A1' : '#DC2626'
+        ),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.x.toFixed(1)}% (${model.topics[ctx.dataIndex].count} articles)`
+          }
+        }
+      },
+      scales: {
+        x: { 
+          grid: { display: false },
+          ticks: { callback: value => value + '%' }
+        },
+        y: { 
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+  
+  // Update annotations
+  const annotations = {
+    k5: 'One topic holds half the corpus. The model found source proxies, not policy themes. Red bars show topics not in the baseline.',
+    k15: '13 topics vanished—including RAAC, breakfast clubs, and mental health. Red bars show topics not in the baseline.',
+    k30: 'This is the baseline. All topics appear in the production model.',
+    k30nm: '18 of 30 topics changed names. Teacher strikes, pay, and politics vanished—they were media-driven.'
+  };
+  
+  document.getElementById('results-annotation').textContent = annotations[modelId];
+}
+
+function loadComparison() {
+  const modelId = currentConfig.corpus === 'nomedia' ? 'k30nm' : currentConfig.k;
+  
+  const comparisons = {
+    k5: {
+      yourLabel: 'Your Model — k=5',
+      yourFinding: 'One topic holds 49.3% — hiding SEND, absence, meals, exclusions, mental health. Three of five are single-source proxies.',
+      yourDetail: 'A policymaker would think "child welfare dominates by 3×." That\'s an artefact of k, not a policy finding.',
+      summary: 'Both pass quality metrics. But k=5 shows one problem; k=30 shows eight separate issues requiring different policy responses.'
+    },
+    k15: {
+      yourLabel: 'Your Model — k=15',
+      yourFinding: 'Pay and strikes merge. Breakfast clubs, RAAC, mental health, EdTech, exclusions disappear. 13 topics vanish.',
+      yourDetail: 'RAAC and breakfast clubs are invisible at k=15. Yet both are major policy issues with hundreds of articles.',
+      summary: 'Coherence: 0.681 vs 0.689. Identical. Yet k=15 hides the RAAC building crisis—120 articles, a major safety concern, invisible.'
+    },
+    k30: {
+      yourLabel: 'Baseline',
+      yourFinding: 'Production model. Change settings in Step 1.',
+      yourDetail: '',
+      summary: 'Change a specification choice to see how findings change.'
+    },
+    k30nm: {
+      yourLabel: 'Your Model — No Media',
+      yourFinding: 'Strikes, pay, politics, RAAC, safeguarding, funding vanish. ESFA regulatory topics emerge. Research and leadership rise to top five.',
+      yourDetail: 'Without SchoolsWeek, the debate fragments into institutional monologues. The "shared debate" is produced by journalism.',
+      summary: '18 of 30 topics changed. The education debate is produced by media—without it, only parallel monologues. This is a finding about the system itself.'
+    }
+  };
+  
+  const comp = comparisons[modelId];
+  document.getElementById('comp-your-label').textContent = comp.yourLabel;
+  document.getElementById('comp-your-finding').textContent = comp.yourFinding;
+  document.getElementById('comp-your-detail').textContent = comp.yourDetail;
+  document.getElementById('comp-summary').innerHTML = `<strong>Insight:</strong> ${comp.summary}`;
+}
+
+// Page 4: RAG
+const RAG_CONTEXTS = {
+  full: {
+    'main issues': 'The dominant themes in English education policy are SEND provision and council funding deficits, teacher recruitment and retention challenges, Ofsted inspection reform, school funding pressures, academy trust governance, and the RAAC building safety crisis. Since the July 2024 election, breakfast clubs and curriculum reform have risen sharply in prominence. Teacher strikes dominated coverage in 2023 but have declined significantly. SchoolsWeek coverage emphasises workforce crises, institutional accountability, and political developments.',
+    'send': 'SEND provision is discussed extensively across sources but primarily through SchoolsWeek coverage (98% of the topic). The dominant framing is crisis-oriented: council deficits creating unsustainable SEND funding pressures, long EHCP waiting times, a lack of specialist provision, and a growing gap between statutory obligations and available resources. The DfE\'s SEND review consultation is seen as politically important but insufficient.',
+    'teacher recruitment': 'Teacher recruitment and retention is the second-largest topic in the corpus (248 articles, 89% SchoolsWeek). The discussion centres on subject-specific shortages in maths, physics, and computing, regional disparities in recruitment, workload as the primary driver of attrition, and the gap between training bursaries and retention outcomes. EPI research highlights the disadvantage dimension—schools in deprived areas face the worst shortages.',
+    'ofsted': 'Ofsted is discussed across two separate topics: inspection reform (236 articles) and report cards (126 articles). The debate centres on the shift from single-word grades to a new report card system, concerns about inspection pressure on headteachers, and calls for a more developmental inspection model. SchoolsWeek has driven much of this coverage through investigative journalism on inspection failures.'
+  },
+  nomedia: {
+    'main issues': 'The dominant themes are pupil attainment data and disadvantage gaps (FFT analysis), regulatory compliance through ESFA funding assurance and provider notifications (GOV.UK), education system leadership and governance (FED), and research on social inequality and youth justice (Nuffield). The discourse is institutional and specialist—each source covers its own domain with minimal overlap. There is no shared conversation about "education policy" as a unified debate.',
+    'send': 'SEND is addressed primarily through GOV.UK regulatory documents—statutory guidance, local authority responsibilities, and EHCP process requirements. EPI research covers the relationship between SEND provision and educational disadvantage. The framing is evidence-based and procedural rather than crisis-oriented. There is no discussion of council deficits, waiting times, or political responses—those aspects come from media coverage absent from this corpus.',
+    'teacher recruitment': 'Teacher workforce issues appear through GOV.UK workforce statistics and policy documents, EPI research on recruitment disparities in disadvantaged areas, and FED leadership perspectives on school-level retention strategies. The framing is analytical rather than crisis-driven—focused on data and systemic factors rather than political urgency or strike action. Pay disputes and union negotiations are entirely absent.',
+    'ofsted': 'Ofsted appears through GOV.UK inspection frameworks and regulatory guidance. The discussion is procedural—inspection criteria, evaluation frameworks, and compliance requirements. There is no debate about whether the inspection model should change, no coverage of headteacher wellbeing concerns, and no political dimension. The reform conversation that dominates the full corpus is entirely absent—it was driven by media coverage.'
+  }
+};
+
+function findContext(q, type) {
+  q = q.toLowerCase();
+  if (q.includes('send') || q.includes('inclusion') || q.includes('special')) 
+    return RAG_CONTEXTS[type]['send'];
+  if (q.includes('teacher') || q.includes('recruit') || q.includes('retention') || q.includes('workforce'))
+    return RAG_CONTEXTS[type]['teacher recruitment'];
+  if (q.includes('ofsted') || q.includes('inspection'))
+    return RAG_CONTEXTS[type]['ofsted'];
+  return RAG_CONTEXTS[type]['main issues'];
+}
+
+function askRAG(preset) {
+  const q = preset || document.getElementById('rag-q').value.trim();
+  if (!q) return;
+  
+  document.getElementById('rag-q').value = q;
+  const fullEl = document.getElementById('rag-full');
+  const nmEl = document.getElementById('rag-nm');
+  
+  fullEl.className = 'rag-body';
+  nmEl.className = 'rag-body';
+  fullEl.innerHTML = '<div class="typing">Searching full corpus</div>';
+  nmEl.innerHTML = '<div class="typing">Searching no-media corpus</div>';
+  
+  document.getElementById('rag-btn').disabled = true;
+  
+  setTimeout(() => {
+    fullEl.textContent = findContext(q, 'full');
+  }, 600 + Math.random() * 400);
+  
+  setTimeout(() => {
+    nmEl.textContent = findContext(q, 'nomedia');
+    document.getElementById('rag-btn').disabled = false;
+  }, 900 + Math.random() * 500);
+}
+
+// Initialize
+updateConfigUI();
+</script>
+
+</body>
+</html>

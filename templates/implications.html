@@ -2,76 +2,121 @@
 {% set active = "implications" %}
 
 {% block title %}AtlasED — Implications{% endblock %}
-{% block heading %}Implications{% endblock %}
-{% block description %}What specification transparency means for education policy analysis{% endblock %}
 
 {% block body %}
-<section class="card prose">
-    <h2>The Core Argument</h2>
-    <p>
-        Model specification choices &mdash; the number of topics (k), which sources are included,
-        and how text is preprocessed &mdash; shape outputs <strong>as much as the data itself</strong>.
-    </p>
-    <p>
-        This dashboard demonstrates that there is no single "correct" topic model of education policy.
-        Every model is a lens, and every lens has a focal point that makes some things visible while
-        obscuring others.
-    </p>
-</section>
+<div class="page-label">Future Vision</div>
+<h1 class="page-title">From Demonstration to Methodology</h1>
+<p class="page-desc">
+    This dashboard demonstrates specification sensitivity in one pipeline. The goal is to extend this
+    approach into a formal tool that can be used in every pipeline, every domain, every high-stakes
+    decision system.
+</p>
 
-<section class="card prose">
-    <h2>What We Found</h2>
-    <h3>k is a volume knob for minority sources</h3>
-    <p>
-        At k=5, a single catch-all topic absorbs 49% of articles. Think tanks (FFT, EPI, Nuffield)
-        are invisible. At k=30, they each get dedicated topics. The choice of k determines which
-        voices are heard.
-    </p>
+<h2 class="section-title">The Vision: SpecCheck as a Standard</h2>
+<div class="card">
+    <div class="card-title">From AtlasED to Universal Practice</div>
+    <div class="card-body">
+        <p>
+            SpecCheck becomes an open-source library with three standardized metrics, applicable to any
+            analytical pipeline, running as a pre-deployment check, a CI job, or a runtime logging layer.
+        </p>
+        <p>
+            <strong>For Engineers:</strong> "Run SpecCheck before deployment" becomes as routine as "run tests."
+            The library outputs a specification sensitivity report — a PDF or dashboard showing how findings vary
+            across perturbations.
+        </p>
+        <p>
+            <strong>For Institutions:</strong> Every deployed model includes a SpecCheck disclosure — a public
+            statement of the specification choices made and the sensitivity of findings to those choices.
+        </p>
+        <p>
+            <strong>For Affected Users:</strong> The basis to ask: "Would the decision have been different
+            under a different specification?" This is contestability at the infrastructure level.
+        </p>
+    </div>
+</div>
 
-    <h3>The education debate is produced by media</h3>
-    <p>
-        Removing SchoolsWeek (70% of the corpus) doesn't just reduce the dataset &mdash; it
-        fundamentally changes what education policy "looks like". Teacher strikes vanish.
-        Shared debate fragments into institutional monologues. Crisis narratives become
-        procedural compliance. The full corpus is crisis-oriented (council deficits, EHCP wait times);
-        the no-media corpus is procedural (statutory guidance, compliance requirements).
-    </p>
+<h2 class="section-title">Extending to Other Domains</h2>
+<div class="stats-grid">
+    <div class="card">
+        <div class="card-header">Mental Health</div>
+        <div class="card-body">
+            Crisis detection models used by emergency services — where specification choices determine who gets
+            flagged for intervention.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">Climate Change</div>
+        <div class="card-body">
+            Policy analysis systems where the framing of "adaptation vs mitigation" depends on which sources
+            are included.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">Criminal Justice</div>
+        <div class="card-body">
+            Risk assessment tools where the choice of features and training data shapes life-changing decisions.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">Financial Services</div>
+        <div class="card-body">
+            Credit scoring models where specification sensitivity could reveal discriminatory patterns.
+        </div>
+    </div>
+</div>
 
-    <h3>Contestability reveals uncertainty</h3>
-    <p>
-        The contestability score (normalised Shannon entropy) shows that many articles don't belong
-        clearly to a single topic. High contestability articles sit at the boundaries between topics
-        &mdash; precisely the articles where specification choices matter most.
-    </p>
-</section>
+<h2 class="section-title">Why This Benefits Everyone</h2>
 
-<section class="card prose">
-    <h2>SpecCheck: A Vision for Specification Transparency</h2>
-    <p>
-        AtlasED demonstrates a methodology we call <strong>SpecCheck</strong> &mdash; the practice of
-        systematically varying model specifications and presenting the differences to users.
-    </p>
-    <p>
-        Rather than presenting a single set of results as definitive, SpecCheck asks:
-        <em>what would change if we made different choices?</em> This approach treats model
-        specification as an analytical decision that should be visible, not hidden.
-    </p>
-    <p>
-        Future applications could extend this to other NLP tasks: sentiment analysis, named entity
-        recognition, document classification &mdash; any task where preprocessing and parameter
-        choices shape outputs.
-    </p>
-</section>
+<div class="callout callout-info">
+    <span class="callout-label">For Researchers</span>
+    Specification sensitivity is not only a quality check. It is a discovery method. Every perturbation
+    shown in this dashboard produced findings about the education system that were inaccessible from any
+    single model run.
+</div>
 
-<section class="card prose">
-    <h2>Data &amp; Methods</h2>
-    <ul>
-        <li><strong>Period:</strong> January 2023 &ndash; September 2025</li>
-        <li><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</li>
-        <li><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</li>
-        <li><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</li>
-        <li><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</li>
-        <li><strong>Election split:</strong> 2024-07-04 (UK General Election)</li>
-    </ul>
-</section>
+<div class="callout callout-warning">
+    <span class="callout-label">For Institutions</span>
+    Auditable evidence that specification choices were tested. When a decision is contested, the institution
+    can show: "We tested this under five different specifications. Here's what changed and what stayed robust."
+</div>
+
+<div class="callout callout-critical">
+    <span class="callout-label">For Those Affected by Decisions</span>
+    The basis to ask whether the decision would have been different under a different specification.
+    This is the foundation of meaningful AI contestability — not just "explain the output," but "show me
+    what would change if the choices were different."
+</div>
+
+<h2 class="section-title">Data & Methods</h2>
+<div class="card">
+    <div class="card-title">Technical Specification</div>
+    <div class="card-body">
+        <p><strong>Period:</strong> January 2023 – September 2025</p>
+        <p><strong>Sources:</strong> SchoolsWeek (media), Gov.uk (government), EPI, Nuffield, FFT (think tanks), FED (federation)</p>
+        <p><strong>Method:</strong> Non-negative Matrix Factorisation (NMF) with TF-IDF</p>
+        <p><strong>Parameters:</strong> init=nndsvd, random_state=42, max_iter=1000</p>
+        <p><strong>TF-IDF:</strong> min_df=3, max_df=0.85, max_features=3000, ngram_range=(1,2)</p>
+        <p><strong>Election split:</strong> 2024-07-04 (UK General Election)</p>
+    </div>
+</div>
+
+<h2 class="section-title">Next Steps</h2>
+<div class="card">
+    <div class="card-title">From Demonstration to Deployment</div>
+    <div class="card-body">
+        <p>
+            <strong>Immediate:</strong> Use this dashboard in stakeholder workshops to demonstrate the principle.
+            Gather feedback from policymakers, engineers, and affected communities.
+        </p>
+        <p>
+            <strong>Short-term:</strong> Develop the SpecCheck library with three core metrics: specification
+            reproducibility, finding stability, and disclosure completeness.
+        </p>
+        <p>
+            <strong>Long-term:</strong> Establish SpecCheck as a standard practice in high-stakes AI deployment —
+            alongside fairness testing, adversarial robustness, and interpretability.
+        </p>
+    </div>
+</div>
 {% endblock %}

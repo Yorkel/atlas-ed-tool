@@ -2,82 +2,152 @@
 {% set active = "overview" %}
 
 {% block title %}AtlasED — Overview{% endblock %}
-{% block heading %}Overview{% endblock %}
-{% block description %}Key metrics for the {{ model_id }} baseline model{% endblock %}
 
 {% block body %}
-<div class="kpi-grid">
-    <div class="kpi-card">
-        <span class="kpi-value">{{ stats.n_articles | default(0) }}</span>
-        <span class="kpi-label">Articles</span>
+<div class="page-label">Production System</div>
+<h1 class="page-title">Making AI Pipeline Choices Visible</h1>
+<p class="page-desc">
+    Every AI pipeline makes choices that determine what it finds. These choices are invisible.
+    AtlasED makes them visible and testable. This is a production NLP system analysing education
+    policy documents across England — with every specification choice disclosed and every finding contestable.
+</p>
+
+<div class="callout callout-info">
+    <span class="callout-label">Why This Matters</span>
+    This tool will be used to run workshops with policy stakeholders to discuss how AI outputs
+    should be used in high-stakes decision-making. When a model tells you "SEND is the largest
+    education issue," you need to know: is that real, or is that a choice I made when I set k=30?
+</div>
+
+<h2 class="section-title">System Overview</h2>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
+        <div class="stat-label">Total Documents Analysed</div>
+        <div class="stat-detail">{{ stats.date_min }} – {{ stats.date_max }}</div>
     </div>
-    <div class="kpi-card">
-        <span class="kpi-value">{{ stats.n_topics | default(0) }}</span>
-        <span class="kpi-label">Topics</span>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
+        <div class="stat-label">Policy Topics Identified</div>
+        <div class="stat-detail">NMF, k=30, production model</div>
     </div>
-    <div class="kpi-card">
-        <span class="kpi-value">{{ stats.n_sources | default(0) }}</span>
-        <span class="kpi-label">Sources</span>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
+        <div class="stat-label">Source Organisations</div>
+        <div class="stat-detail">SchoolsWeek (70%) + Gov + Think Tanks</div>
     </div>
-    <div class="kpi-card">
-        <span class="kpi-value">{{ stats.date_min }} &mdash; {{ stats.date_max }}</span>
-        <span class="kpi-label">Date Range</span>
-    </div>
-    <div class="kpi-card">
-        <span class="kpi-value">{{ "%.3f" | format(stats.stability | default(0)) }}</span>
-        <span class="kpi-label">Stability</span>
-    </div>
-    <div class="kpi-card">
-        <span class="kpi-value">{{ "%.3f" | format(stats.mean_weight | default(0)) }}</span>
-        <span class="kpi-label">Mean Weight</span>
+    <div class="stat-card">
+        <div class="stat-value">{{ "%.3f" | format(stats.stability | default(0) | float) }}</div>
+        <div class="stat-label">Model Stability</div>
+        <div class="stat-detail">Topic reproducibility score</div>
     </div>
 </div>
 
-<section class="card">
-    <h2>Source Distribution</h2>
-    <canvas id="sourceChart" height="100"></canvas>
-</section>
+<h2 class="section-title">Source Distribution</h2>
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title">Articles by Source Organisation</h3>
+        <p class="chart-subtitle">SchoolsWeek dominates the corpus — but is that a problem or a design choice?</p>
+    </div>
+    <canvas id="chart-sources"></canvas>
+    <p class="chart-annotation">
+        SchoolsWeek provides 70% of the corpus. This concentration shapes every finding.
+        The Specification Sensitivity page shows what happens when you remove it.
+    </p>
+</div>
 
-<section class="card">
-    <h2>Topic Distribution ({{ model_id }})</h2>
-    <canvas id="topicChart" height="200"></canvas>
-</section>
+<h2 class="section-title">Topic Distribution</h2>
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title">All Topics by Article Count</h3>
+        <p class="chart-subtitle">The baseline model (k=30) identifies these policy areas in the corpus</p>
+    </div>
+    <canvas id="chart-topics"></canvas>
+</div>
+
+<h2 class="section-title">Why NMF?</h2>
+<div class="card">
+    <div class="card-header">Model Choice Rationale</div>
+    <div class="card-title">Transparency Over Performance</div>
+    <div class="card-body">
+        <p>
+            Non-negative Matrix Factorization (NMF) was chosen deliberately — not because it's the most
+            sophisticated model, but because this project is about <strong>specification transparency</strong>,
+            and NMF makes every modeling choice explicit and auditable.
+        </p>
+        <p>
+            The number of topics (k), the vocabulary preprocessing, the document weighting — these
+            aren't hidden inside a neural network. They're parameters you set, and you can see what happens
+            when you change them.
+        </p>
+    </div>
+</div>
+
+<div class="callout callout-warning">
+    <span class="callout-label">The Core Finding</span>
+    No specification choice preserves more than 18% of topic names. Standard diagnostics cannot detect this.
+    The only way to know is to perturb and compare. That's what the next pages show.
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
 const topics = {{ topics | tojson }};
-
-// Source distribution — from pre-computed source_counts
 const sourceCounts = {{ stats.source_counts | default({}) | tojson }};
-new Chart(document.getElementById("sourceChart"), {
-    type: "doughnut",
+
+// Source distribution chart
+new Chart(document.getElementById("chart-sources"), {
+    type: "bar",
     data: {
         labels: Object.keys(sourceCounts),
         datasets: [{
+            label: "Article Count",
             data: Object.values(sourceCounts),
-            backgroundColor: ["#2563eb","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#6366f1"]
+            backgroundColor: "#0369A1",
+            borderRadius: 4
         }]
     },
-    options: { responsive: true, plugins: { legend: { position: "right" } } }
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
+            y: { grid: { display: false } }
+        }
+    }
 });
 
-// Topic distribution bar chart
-new Chart(document.getElementById("topicChart"), {
+// Topic distribution chart
+new Chart(document.getElementById("chart-topics"), {
     type: "bar",
     data: {
         labels: topics.map(t => t.name),
         datasets: [{
             label: "Articles",
             data: topics.map(t => t.article_count),
-            backgroundColor: "#2563eb"
+            backgroundColor: "#0369A1",
+            borderRadius: 4
         }]
     },
     options: {
-        responsive: true,
         indexAxis: "y",
-        plugins: { legend: { display: false } },
-        scales: { x: { title: { display: true, text: "Article count" } } }
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: ctx => `${ctx.parsed.x.toLocaleString()} articles (${topics[ctx.dataIndex].pct}%)`
+                }
+            }
+        },
+        scales: {
+            x: { grid: { display: false }, ticks: { callback: v => v.toLocaleString() } },
+            y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+        }
     }
 });
 </script>
