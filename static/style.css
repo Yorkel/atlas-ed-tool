@@ -84,15 +84,16 @@ body {
   display: flex;
   background: #e8edf2;
   border-bottom: 1px solid #d6e4ef;
-  height: 56px;
+  height: auto;
+  min-height: 60px;
 }
 
 .nav-overview {
   display: flex;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 24px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--ocean);
   border-right: 1px solid #d6e4ef;
   cursor: pointer;
@@ -127,7 +128,7 @@ body {
 .nav-column:last-child { border-right: none; }
 
 .group-title {
-  font-size: 11px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #888;
@@ -143,11 +144,12 @@ body {
 .link-row a {
   text-decoration: none;
   color: var(--ocean);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 4px;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .link-row a:hover {
