@@ -951,7 +951,67 @@ body {
 /* ── Responsive ────────────────────────────────────────────────────── */
 @media (max-width: 968px) {
   .rag-container, .compare-grid { grid-template-columns: 1fr; }
-  .page-title { font-size: 2rem; }
+  .page-title { font-size: 1.5rem; }
   .main { padding: 1.5rem 1rem; }
   .stepper { flex-direction: column; }
+
+  /* Nav stacks vertically on mobile */
+  .nav-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .nav-overview {
+    border-right: none;
+    border-bottom: 1px solid #d6e4ef;
+    padding: 10px 16px;
+    justify-content: center;
+  }
+  .nav-groups {
+    flex-direction: column;
+  }
+  .nav-column {
+    border-right: none;
+    border-bottom: 1px solid #d6e4ef;
+    padding: 8px 12px;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  .nav-column:last-child { border-bottom: none; }
+  .group-title {
+    margin-bottom: 0;
+    margin-right: 8px;
+    font-size: 8px;
+  }
+  .link-row {
+    gap: 8px;
+  }
+  .link-row a {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* Topics layout stacks */
+  .topics-layout { grid-template-columns: 1fr; }
+  .topics-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0;
+    padding-bottom: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .filter-buttons { flex-direction: row; flex-wrap: wrap; }
+
+  /* Trends layout stacks */
+  .trends-layout { grid-template-columns: 1fr; }
+  .trends-legend {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding-left: 0;
+    padding-top: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: none;
+  }
 }
