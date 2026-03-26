@@ -28,7 +28,7 @@ body {
 .header {
   background: var(--navy);
   color: white;
-  padding: 16px 2rem;
+  padding: 18px 2rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   position: sticky;
   top: 0;
@@ -84,7 +84,7 @@ body {
   display: flex;
   background: #e8edf2;
   border-bottom: 1px solid #d6e4ef;
-  height: 90px;
+  height: 56px;
 }
 
 .nav-overview {
@@ -131,7 +131,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #888;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
@@ -197,7 +197,7 @@ body {
   font-size: 1.05rem;
   color: var(--text-secondary);
   line-height: 1.7;
-  max-width: 72ch;
+  max-width: none;
   margin-bottom: 0.75rem;
 }
 
