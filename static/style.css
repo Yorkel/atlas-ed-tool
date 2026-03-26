@@ -30,8 +30,6 @@ body {
   color: white;
   padding: 18px 2rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  position: sticky;
-  top: 0;
   z-index: 100;
 }
 
@@ -75,8 +73,6 @@ body {
 /* ── Navigation ───────────────────────────────────────────────────── */
 .nav {
   width: 100%;
-  position: sticky;
-  top: 60px;
   z-index: 99;
 }
 
@@ -167,7 +163,7 @@ body {
 .main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2.5rem 2rem;
+  padding: 1rem 2rem 2.5rem;
 }
 
 @keyframes fadeIn {
@@ -765,28 +761,32 @@ body {
 
 .accordion-toggle {
   padding: 1rem 1.5rem;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   list-style: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--text-primary);
+  color: var(--ocean);
+  transition: background 0.2s;
+}
+
+.accordion-toggle:hover {
+  background: rgba(3, 105, 161, 0.04);
 }
 
 .accordion-toggle::-webkit-details-marker { display: none; }
 
 .accordion-toggle::after {
-  content: '+';
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: var(--text-muted);
+  content: '▸';
+  font-size: 1rem;
+  color: var(--ocean);
   transition: transform 0.2s;
 }
 
 .accordion[open] .accordion-toggle::after {
-  content: '-';
+  transform: rotate(90deg);
 }
 
 .accordion[open] .pipeline-grid {

@@ -4,52 +4,7 @@
 {% block title %}AtlasED - Ask the Data{% endblock %}
 
 {% block body %}
-<h1 class="page-title">What Happens When the Data Changes?</h1>
-<p class="page-desc">
-    The previous page changed the model. This page changes the data. Education media (SchoolsWeek)
-    makes up 70% of the corpus. What happens when we remove it entirely and retrain the same model?
-</p>
-
-<div class="callout callout-info">
-    <span class="callout-label">How to read this</span>
-    Both models use k=30 and the same method. The only difference is the data: one includes all
-    sources, the other removes media. Topics that appear in <strong>both</strong> share the same
-    colour. Grey topics only exist in one version - they depend on which voices are included.
-</div>
-
-<!-- Side-by-side topic charts -->
-<h2 class="section-title">Topics: Full Corpus vs No Media</h2>
-
-<div class="compare-grid">
-    <div class="comparison-panel">
-        <div class="comparison-label" style="color:var(--ocean);">Full Corpus ({{ "{:,}".format(model_full.n_articles) }} articles)</div>
-        <div style="max-height:350px;"><canvas id="chartFull"></canvas></div>
-    </div>
-    <div class="comparison-panel">
-        <div class="comparison-label" style="color:var(--amber);">No Media ({{ "{:,}".format(model_nm.n_articles) }} articles)</div>
-        <div style="max-height:350px;"><canvas id="chartNM"></canvas></div>
-    </div>
-</div>
-
-<div id="corpusSummary" class="callout callout-warning" style="margin-top:0;">
-    <span class="callout-label">What Changed</span>
-    <span id="corpusSummaryText"></span>
-</div>
-
-<div class="callout callout-critical">
-    <span class="callout-label">Key Finding</span>
-    Removing SchoolsWeek doesn't just shrink the dataset - it changes what education policy
-    "looks like." Teacher strikes vanish. Shared debate fragments into institutional monologues.
-    The full corpus is crisis-oriented; the no-media corpus is procedural.
-</div>
-
-<!-- RAG Section -->
-<h2 class="section-title">Ask the Same Question, Get Different Answers</h2>
-<p class="page-desc" style="margin-bottom:1rem;">
-    Ask a question about education policy. The same question gets different answers depending on
-    which documents the AI draws on. The left panel uses government, media, research and think tank
-    publications. The right panel is the same model but with media coverage removed. Notice how the focus shifts.
-</p>
+<h1 class="page-title">Ask the Data</h1>
 
 <div class="rag-input-container">
     <select class="rag-select" id="questionSelect" onchange="showQuestion(this.value)">
@@ -61,14 +16,14 @@
 
 <div class="rag-container">
     <div class="rag-panel">
-        <div class="rag-header">Full Corpus (including media)</div>
+        <div class="rag-header">Full Dataset (including media)</div>
         <div class="rag-body" id="fullAnswer">
             <em style="color: var(--text-muted);">Select a question above to see results...</em>
         </div>
         <div class="rag-meta" id="fullMeta"></div>
     </div>
     <div class="rag-panel">
-        <div class="rag-header">No-Media Corpus</div>
+        <div class="rag-header">No-Media Dataset</div>
         <div class="rag-body" id="nmAnswer">
             <em style="color: var(--text-muted);">Select a question above to see results...</em>
         </div>
@@ -86,74 +41,6 @@
 
 {% block scripts %}
 <script>
-// ── Corpus comparison charts ─────────────────────────────────────────
-const topicsFull = {{ topics_full | tojson }};
-const topicsNM = {{ topics_nm | tojson }};
-
-const COLORS = [
-    "#0369A1","#DC2626","#F59E0B","#10b981","#8b5cf6","#ec4899",
-    "#6366f1","#14b8a6","#f97316","#06b6d4","#84cc16","#e11d48",
-    "#7c3aed","#0ea5e9","#d946ef","#facc15","#22d3ee","#a3e635",
-    "#fb7185","#38bdf8","#4ade80","#c084fc","#fbbf24","#34d399"
-];
-const GREY = "#D1D5DB";
-
-function formatTopicName(name) {
-    return name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-}
-
-// Build colour map for shared topics
-const namesFull = new Set(topicsFull.map(t => t.name));
-const namesNM = new Set(topicsNM.map(t => t.name));
-const shared = [...namesFull].filter(n => namesNM.has(n));
-const colourMap = {};
-shared.forEach((name, i) => { colourMap[name] = COLORS[i % COLORS.length]; });
-
-const sharedCount = shared.length;
-const pct = Math.round(sharedCount / Math.max(topicsFull.length, topicsNM.length) * 100);
-document.getElementById("corpusSummaryText").innerHTML =
-    `<strong>${sharedCount}</strong> of ${Math.max(topicsFull.length, topicsNM.length)} topics are shared. ` +
-    `<strong>${topicsFull.length - sharedCount}</strong> topics exist only in the full corpus, ` +
-    `<strong>${topicsNM.length - sharedCount}</strong> only in the no-media corpus. ` +
-    `Only <strong>${pct}%</strong> of topics survive when media is removed.`;
-
-function renderCorpusChart(canvasId, topics) {
-    const top10 = topics.slice(0, 10);
-    return new Chart(document.getElementById(canvasId).getContext("2d"), {
-        type: "bar",
-        data: {
-            labels: top10.map(t => formatTopicName(t.name)),
-            datasets: [{
-                label: "Articles",
-                data: top10.map(t => t.article_count),
-                backgroundColor: top10.map(t => colourMap[t.name] || GREY),
-                borderRadius: 6,
-                borderSkipped: false
-            }]
-        },
-        options: {
-            indexAxis: "y",
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => `${ctx.parsed.x} articles (${top10[ctx.dataIndex].pct}%)`
-                    }
-                }
-            },
-            scales: {
-                x: { grid: { display: false } },
-                y: { grid: { display: false }, ticks: { font: { size: 11 } } }
-            }
-        }
-    });
-}
-
-renderCorpusChart("chartFull", topicsFull);
-renderCorpusChart("chartNM", topicsNM);
-
 // ── RAG section ──────────────────────────────────────────────────────
 const questions = {{ questions | tojson }};
 const qKeys = Object.keys(questions);
