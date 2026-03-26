@@ -115,6 +115,14 @@ async def next_steps(request: Request):
     })
 
 
+# ── Page 6: Contact ──────────────────────────────────────────────────
+@app.get("/contact", response_class=HTMLResponse)
+async def contact(request: Request):
+    return templates.TemplateResponse("contact.html", {
+        "request": request,
+    })
+
+
 # ── Feedback ──────────────────────────────────────────────────────────
 @app.post("/api/feedback")
 async def submit_feedback(request: Request):
