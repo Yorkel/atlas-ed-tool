@@ -1,5 +1,5 @@
 /* ── Reset ─────────────────────────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
 :root {
   --navy: #0A1628;
@@ -17,19 +17,19 @@
 }
 
 body {
-  font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--bg);
-  color: var(--text-primary);
-  line-height: 1.6;
-  font-size: 15px;
+  color: #1a1a1a;
+  line-height: 1.65;
+  font-size: 16px;
 }
 
 /* ── Header ───────────────────────────────────────────────────────── */
 .header {
   background: var(--navy);
   color: white;
-  padding: 1.2rem 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 8px 2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -50,7 +50,7 @@ body {
 }
 
 .logo-text {
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -82,7 +82,7 @@ body {
 
 .nav-container {
   display: flex;
-  background: #e8f0f8;
+  background: #e8edf2;
   border-bottom: 1px solid #d6e4ef;
   height: 80px;
 }
@@ -122,12 +122,12 @@ body {
 .nav-column:last-child { border-right: none; }
 
 .group-title {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: #aaa;
+  letter-spacing: 1px;
+  color: #888;
   margin-bottom: 8px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .link-row {
@@ -177,12 +177,11 @@ body {
 }
 
 .page-title {
-  font-family: 'Source Serif 4', serif;
-  font-size: 2.5rem;
+  font-size: 32px;
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 0.75rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .page-desc {
@@ -198,9 +197,8 @@ body {
 }
 
 .section-title {
-  font-family: 'Source Serif 4', serif;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   margin: 2.5rem 0 1rem;
 }
 
@@ -228,7 +226,7 @@ body {
 }
 
 .card-title {
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -269,17 +267,16 @@ body {
 }
 
 .stat-value {
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  font-size: 2rem;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1;
-  color: var(--text-primary);
+  color: #1a5276;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 11px;
   font-weight: 600;
-  color: #888;
+  color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.4rem;
@@ -342,7 +339,7 @@ body {
 .chart-header { margin-bottom: 1.5rem; }
 
 .chart-title {
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -781,7 +778,7 @@ body {
   border-radius: 50%;
   background: var(--navy);
   color: white;
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   font-size: 1.1rem;
 }
@@ -888,7 +885,7 @@ body {
 }
 
 .feedback-box h3 {
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 }
