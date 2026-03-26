@@ -9,35 +9,34 @@
     See how topics change over time. Select specific topics or view the top 10 together.
 </p>
 
-<div class="topics-layout">
-    <div class="topics-sidebar">
-        <div class="filter-section">
-            <div class="filter-label">Topics</div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
-                <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
-            </div>
-        </div>
-        <div class="filter-section" id="topicPicker" style="display:none;">
-            <div class="filter-label">Select Topics</div>
-            <div class="topic-checkboxes">
-                {% for t in topics %}
-                <label class="topic-checkbox">
-                    <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
-                    {{ t.name | replace("_", " ") | title }}
-                </label>
-                {% endfor %}
-            </div>
-            <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;width:100%;">Update Chart</button>
-        </div>
+<!-- Top controls -->
+<div style="display:flex;gap:12px;margin-bottom:1rem;">
+    <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
+    <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
+</div>
+
+<div id="topicPicker" class="hidden" style="margin-bottom:1rem;">
+    <div class="topic-checkboxes" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+        {% for t in topics %}
+        <label class="topic-checkbox">
+            <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
+            {{ t.name | replace("_", " ") | title }}
+        </label>
+        {% endfor %}
     </div>
-    <div class="topics-chart">
-        <p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;text-align:center;">
-            <strong>Jul 2024</strong> — UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
-        </p>
-        <h3 class="chart-title">Selected Topics Over Time</h3>
+    <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;">Update Chart</button>
+</div>
+
+<p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;text-align:center;">
+    <strong>Jul 2024</strong>: UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
+</p>
+
+<!-- Chart with legend on the right -->
+<div class="trends-layout">
+    <div class="trends-chart-area">
         <canvas id="chart-trends"></canvas>
     </div>
+    <div class="trends-legend" id="trendsLegend"></div>
 </div>
 
 <a href="/sensitivity" style="text-decoration:none;display:block;">
@@ -51,22 +50,48 @@
 
 {% block scripts %}
 <style>
-.topics-layout {
+.trends-layout {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 1fr 180px;
     gap: 1.5rem;
-    margin: 1.5rem 0;
+    margin: 0.5rem 0 1.5rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
 }
-.topics-sidebar {
+
+.trends-chart-area {
+    min-height: 0;
+}
+
+.trends-chart-area canvas {
+    max-height: 400px;
+}
+
+.trends-legend {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    border-right: 1px solid var(--border);
-    padding-right: 1.5rem;
+    gap: 6px;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border);
+    font-size: 12px;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #444;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 .filter-label {
     font-size: 0.7rem;
@@ -218,7 +243,7 @@ async function loadTrends(topicNums) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
+                legend: { display: false }
             },
             scales: {
                 x: {
@@ -262,6 +287,15 @@ async function loadTrends(topicNums) {
             }
         }]
     });
+
+    // Build custom legend on the right
+    const legendEl = document.getElementById('trendsLegend');
+    legendEl.innerHTML = datasets.map(ds =>
+        `<div class="legend-item">
+            <span class="legend-dot" style="background:${ds.borderColor}"></span>
+            ${ds.label}
+        </div>`
+    ).join('');
 }
 
 loadTrends('');
