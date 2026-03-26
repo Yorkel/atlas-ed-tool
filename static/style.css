@@ -1,5 +1,5 @@
 /* ── Reset ─────────────────────────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Source Serif 4', Georgia, serif; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
   --navy: #0A1628;
@@ -28,8 +28,8 @@ body {
 .header {
   background: var(--navy);
   color: white;
-  padding: 18px 2rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 20px 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   z-index: 100;
 }
 
@@ -48,7 +48,7 @@ body {
 }
 
 .logo-text {
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: inherit;
   font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -77,8 +77,9 @@ body {
 }
 
 .nav-container {
-  background: #e8edf2;
-  border-bottom: 1px solid #d6e4ef;
+  background: #dce4ed;
+  border-top: 1px solid #c8d4e0;
+  border-bottom: 2px solid #c8d4e0;
   display: flex;
   justify-content: center;
 }
@@ -89,7 +90,7 @@ body {
   max-width: 900px;
   width: 100%;
   gap: 48px;
-  padding: 4px 1rem 6px;
+  padding: 12px 1rem;
 }
 
 .nav-column {
@@ -211,7 +212,7 @@ body {
 }
 
 .card-title {
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: inherit;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -235,36 +236,38 @@ body {
 }
 
 .stat-card {
-  background: #f5f7f9;
-  border: none;
-  border-radius: 8px;
-  padding: 1.5rem;
+  background: white;
+  border: 1px solid #d6e4ef;
+  border-top: 3px solid var(--ocean);
+  border-radius: 6px;
+  padding: 1.25rem 1rem;
   transition: all 0.2s;
   text-align: center;
   display: flex;
   flex-direction: column-reverse;
-  min-height: 100px;
+  min-height: 90px;
   justify-content: center;
 }
 
 .stat-card:hover {
-  background: #edf1f5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  line-height: 1;
-  color: #1a5276;
+  line-height: 1.2;
+  color: var(--navy);
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.4rem;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.35rem;
   line-height: 1.4;
 }
 
@@ -346,7 +349,7 @@ body {
 .chart-header { margin-bottom: 1.5rem; }
 
 .chart-title {
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: inherit;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -827,7 +830,7 @@ body {
   border-radius: 50%;
   background: var(--navy);
   color: white;
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: 1.1rem;
 }
@@ -934,7 +937,7 @@ body {
 }
 
 .feedback-box h3 {
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: inherit;
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 }
