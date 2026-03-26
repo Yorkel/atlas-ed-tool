@@ -35,8 +35,12 @@
 <!-- Navigation -->
 <nav class="nav">
     <div class="nav-container">
-        <a href="/" class="nav-overview {% if active == 'overview' %}active{% endif %}">Overview</a>
         <div class="nav-groups">
+            <div class="nav-column" style="flex:0 0 auto; border-right:none;">
+                <div class="link-row">
+                    <a href="/" class="{% if active == 'overview' %}active{% endif %}">Overview</a>
+                </div>
+            </div>
             <div class="nav-column">
                 <span class="group-title">Explore the Data</span>
                 <div class="link-row">

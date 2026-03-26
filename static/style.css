@@ -83,28 +83,6 @@ body {
   height: auto;
 }
 
-.nav-overview {
-  display: flex;
-  align-items: center;
-  padding: 8px 24px;
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--ocean);
-  border-right: 1px solid #d6e4ef;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.nav-overview:hover {
-  background: var(--ocean);
-  color: white;
-}
-
-.nav-overview.active {
-  background: var(--ocean);
-  color: white;
-}
 
 .nav-groups {
   display: flex;

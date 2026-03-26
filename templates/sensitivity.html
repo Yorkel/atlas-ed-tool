@@ -47,30 +47,18 @@
     </div>
 </div>
 
-<h2 class="section-title">Key Findings</h2>
 
-<div class="chart-container">
-    <table class="data-table">
-        <thead><tr><th>k</th><th>Stability</th><th>Single-source topics</th><th>Observation</th></tr></thead>
-        <tbody>
-            <tr><td>5</td><td>1.000</td><td>60%</td><td>One catch-all topic holds 49% of articles. Minority sources invisible.</td></tr>
-            <tr><td>15</td><td>1.000</td><td>40%</td><td>RAAC and breakfast clubs disappear. FFT/EPI first become visible.</td></tr>
-            <tr><td>30</td><td>0.966</td><td>47%</td><td>Maximum granularity. Multiple plausible solutions emerge.</td></tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="callout callout-warning">
-    <span class="callout-label">The Core Finding</span>
-    <strong>k is a volume knob for minority sources</strong> - as k increases, smaller voices
-    (FFT, EPI, Nuffield) become audible in topics shaped for them.
-</div>
+<p class="page-desc" style="margin-top:2rem;">
+    The key finding: only 7% of topics remain when moving from a zoomed-in view (30 topics) to a zoomed-out view (5 topics). At a zoomed-out level, issues are grouped together and smaller voices disappear. At a zoomed-in level, more detail appears - but multiple plausible interpretations emerge.
+</p>
+<p class="page-desc">
+    The core insight is that the number of topics acts like a zoom control - smaller voices only become visible as you zoom in. The next page shifts focus by changing the data rather than the model settings.
+</p>
 
 <a href="/ask" style="text-decoration:none;display:block;">
-    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
+    <div class="callout callout-info" style="margin-top:1rem;cursor:pointer;">
         <span class="callout-label">What's Next &rarr;</span>
-        This page changed the number of topics. On the next page, we change the data itself -
-        removing all media articles to see how that shifts what the model finds.
+        On the next page, we change the data itself - removing all media articles to see how that shifts what the model finds.
     </div>
 </a>
 {% endblock %}
@@ -107,8 +95,13 @@
     outline: none;
     border-color: var(--ocean);
 }
+.comparison-panel {
+    overflow: hidden;
+    min-width: 0;
+}
 .comparison-panel canvas {
-    max-height: 320px;
+    max-height: 300px;
+    width: 100% !important;
 }
 </style>
 
