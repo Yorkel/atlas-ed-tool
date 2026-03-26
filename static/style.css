@@ -74,33 +74,36 @@ body {
 
 /* ── Navigation ───────────────────────────────────────────────────── */
 .nav {
-  background: white;
-  border-bottom: 1px solid var(--border);
+  width: 100%;
   position: sticky;
   top: 60px;
   z-index: 99;
 }
 
 .nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
   display: flex;
-  align-items: center;
+  background: white;
+  border-bottom: 1px solid #ececec;
+  height: 80px;
 }
 
 .nav-overview {
-  padding: 20px 24px;
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
   font-weight: 700;
-  font-size: 0.9rem;
-  border-right: 1px solid var(--border);
+  font-size: 14px;
+  color: #444;
+  border-right: 1px solid #ececec;
+  border-top: 4px solid transparent;
+  cursor: pointer;
   text-decoration: none;
-  white-space: nowrap;
-  transition: color 0.2s;
 }
 
-.nav-overview:hover { color: var(--text-primary); }
-.nav-overview.active { color: var(--ocean); }
+.nav-overview.active {
+  color: var(--ocean);
+  border-top-color: var(--ocean);
+}
 
 .nav-groups {
   display: flex;
@@ -109,47 +112,44 @@ body {
 
 .nav-column {
   flex: 1;
-  padding: 10px 20px;
-  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #ececec;
 }
 
 .nav-column:last-child { border-right: none; }
 
 .group-title {
-  display: block;
   font-size: 10px;
-  font-weight: 600;
-  color: #999;
-  letter-spacing: 1.2px;
   text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #999;
   margin-bottom: 8px;
-  text-align: center;
+  font-weight: 600;
 }
 
 .link-row {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .link-row a {
   text-decoration: none;
-  color: var(--text-secondary);
+  color: #444;
   font-size: 14px;
-  font-weight: 600;
-  padding-bottom: 6px;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 .link-row a:hover {
-  color: var(--text-primary);
+  color: var(--ocean);
 }
 
 .link-row a.active {
   color: var(--ocean);
   font-weight: 700;
-  border-bottom-color: var(--ocean);
 }
 
 /* ── Main Content ─────────────────────────────────────────────────── */
