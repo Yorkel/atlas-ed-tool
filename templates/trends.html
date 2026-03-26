@@ -9,39 +9,29 @@
     See how topics change over time. Select specific topics or view the top 10 together.
 </p>
 
-<!-- Top controls -->
-<div style="display:flex;gap:12px;margin-bottom:1rem;">
-    <button class="filter-btn active" id="btnAllTopics" onclick="selectAllTopics()">Top 10</button>
-    <button class="filter-btn" id="btnCustomTopics" onclick="enableCustomTopics()">Custom</button>
-</div>
-
-<div id="topicPicker" class="hidden" style="margin-bottom:1rem;">
-    <div class="topic-checkboxes" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-        {% for t in topics %}
-        <label class="topic-checkbox">
-            <input type="checkbox" value="{{ t.topic_num }}" class="topic-cb">
-            {{ t.name | replace("_", " ") | title }}
-        </label>
-        {% endfor %}
-    </div>
-    <button class="filter-btn active" onclick="updateTrends()" style="margin-top:0.5rem;">Update Chart</button>
-</div>
-
 <p class="chart-annotation" style="margin-bottom:0.75rem;margin-top:0;padding-top:0;border:none;text-align:center;">
     <strong>Jul 2024</strong>: UK general election. Labour wins. Bridget Phillipson becomes Education Secretary.
 </p>
 
-<!-- Chart with legend on the right -->
+<!-- Chart with clickable legend on the right -->
 <div class="trends-layout">
     <div class="trends-chart-area">
         <canvas id="chart-trends"></canvas>
     </div>
-    <div class="trends-legend" id="trendsLegend"></div>
+    <div class="trends-legend" id="trendsLegend">
+        <div class="legend-item legend-toggle" onclick="toggleAll()" style="font-weight:700;cursor:pointer;color:var(--ocean);margin-bottom:4px;">
+            <span class="legend-dot" style="background:var(--ocean);"></span> All
+        </div>
+    </div>
+</div>
+
+<div class="callout callout-warning" style="margin-top:2rem;">
+    <span class="callout-label">Key Takeaway</span>
+    These are meaningful results for understanding education policy. But how much depends on the choices made to get here?
 </div>
 
 <a href="/sensitivity" style="text-decoration:none;display:block;">
     <div class="callout callout-info callout-next" style="cursor:pointer;">
-        <p style="margin-bottom:0.75rem;color:var(--text-secondary);">These are meaningful results for understanding education policy. But how much depends on the choices made to get here?</p>
         <span class="callout-label">What's Next &rarr;</span>
         Explore what changes when the model changes.
     </div>
@@ -167,54 +157,48 @@ function formatTopicName(name) {
 }
 
 let trendsChart;
-let customMode = false;
+let allData = [];
+let visibleTopics = new Set();
 
-function selectAllTopics() {
-    customMode = false;
-    document.getElementById('btnAllTopics').classList.add('active');
-    document.getElementById('btnCustomTopics').classList.remove('active');
-    document.getElementById('topicPicker').style.display = 'none';
-    loadTrends('');
-}
-
-function enableCustomTopics() {
-    customMode = true;
-    document.getElementById('btnCustomTopics').classList.add('active');
-    document.getElementById('btnAllTopics').classList.remove('active');
-    document.getElementById('topicPicker').style.display = 'block';
-}
-
-function updateTrends() {
-    const checked = document.querySelectorAll('.topic-cb:checked');
-    const nums = Array.from(checked).map(cb => parseInt(cb.value));
-    if (nums.length > 0) loadTrends(nums.join(','));
-}
-
-async function loadTrends(topicNums) {
-    const params = new URLSearchParams();
-    if (topicNums) params.set('topic_nums', topicNums);
-
-    const res = await fetch('/api/timeseries?' + params);
-    let data = await res.json();
-
-    // If no topic filter, take top 10 by total count
-    if (!topicNums) {
+function toggleAll() {
+    const allNames = [...new Set(allData.map(r => r.topic_name))];
+    if (visibleTopics.size === allNames.length) {
+        // If all visible, show top 10 only
         const totals = {};
-        data.forEach(r => { totals[r.topic_name] = (totals[r.topic_name] || 0) + r.article_count; });
-        const top10Names = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0,10).map(e => e[0]);
-        data = data.filter(r => top10Names.includes(r.topic_name));
+        allData.forEach(r => { totals[r.topic_name] = (totals[r.topic_name] || 0) + r.article_count; });
+        const top10 = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0,10).map(e => e[0]);
+        visibleTopics = new Set(top10);
+    } else {
+        visibleTopics = new Set(allNames);
     }
+    renderChart();
+}
+
+function toggleTopic(name) {
+    if (visibleTopics.has(name)) {
+        visibleTopics.delete(name);
+    } else {
+        visibleTopics.add(name);
+    }
+    renderChart();
+}
+
+function renderChart() {
+    const filtered = allData.filter(r => visibleTopics.has(r.topic_name));
 
     const grouped = {};
     const allMonths = new Set();
-    data.forEach(r => {
+    filtered.forEach(r => {
         const label = `${r.year}-${String(r.month).padStart(2,'0')}`;
         if (!grouped[r.topic_name]) grouped[r.topic_name] = {};
         grouped[r.topic_name][label] = (grouped[r.topic_name][label] || 0) + r.article_count;
         allMonths.add(label);
     });
 
-    const months = [...allMonths].sort();
+    // Use all months from full data for consistent x-axis
+    const fullMonths = new Set();
+    allData.forEach(r => { fullMonths.add(`${r.year}-${String(r.month).padStart(2,'0')}`); });
+    const months = [...fullMonths].sort();
     const electionIdx = months.indexOf('2024-07');
 
     const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -242,9 +226,7 @@ async function loadTrends(topicNums) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 x: {
                     title: { display: true, text: 'Month' },
@@ -288,16 +270,39 @@ async function loadTrends(topicNums) {
         }]
     });
 
-    // Build custom legend on the right
+    // Update legend
+    const allNames = [...new Set(allData.map(r => r.topic_name))];
+    const totals = {};
+    allData.forEach(r => { totals[r.topic_name] = (totals[r.topic_name] || 0) + r.article_count; });
+    const sorted = allNames.sort((a,b) => (totals[b]||0) - (totals[a]||0));
+
     const legendEl = document.getElementById('trendsLegend');
-    legendEl.innerHTML = datasets.map(ds =>
-        `<div class="legend-item">
-            <span class="legend-dot" style="background:${ds.borderColor}"></span>
-            ${ds.label}
-        </div>`
-    ).join('');
+    legendEl.innerHTML =
+        `<div class="legend-item legend-toggle" onclick="toggleAll()" style="font-weight:700;cursor:pointer;color:var(--ocean);margin-bottom:4px;">
+            <span class="legend-dot" style="background:var(--ocean);"></span> All
+        </div>` +
+        sorted.map((name, i) => {
+            const active = visibleTopics.has(name);
+            return `<div class="legend-item" onclick="toggleTopic('${name}')" style="cursor:pointer;opacity:${active ? 1 : 0.35};">
+                <span class="legend-dot" style="background:${COLORS[i % COLORS.length]};"></span>
+                ${formatTopicName(name)}
+            </div>`;
+        }).join('');
 }
 
-loadTrends('');
+async function loadTrends() {
+    const res = await fetch('/api/timeseries?');
+    allData = await res.json();
+
+    // Default: show top 10
+    const totals = {};
+    allData.forEach(r => { totals[r.topic_name] = (totals[r.topic_name] || 0) + r.article_count; });
+    const top10 = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0,10).map(e => e[0]);
+    visibleTopics = new Set(top10);
+
+    renderChart();
+}
+
+loadTrends();
 </script>
 {% endblock %}
