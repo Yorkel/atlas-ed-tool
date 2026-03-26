@@ -1,5 +1,5 @@
 /* ── Reset ─────────────────────────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Source Serif 4', Georgia, serif; }
 
 :root {
   --navy: #0A1628;
@@ -17,7 +17,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   background: var(--bg);
   color: #1a1a1a;
   line-height: 1.65;
@@ -28,7 +28,7 @@ body {
 .header {
   background: var(--navy);
   color: white;
-  padding: 8px 2rem;
+  padding: 16px 2rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   position: sticky;
   top: 0;
@@ -50,7 +50,7 @@ body {
 }
 
 .logo-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -84,7 +84,7 @@ body {
   display: flex;
   background: #e8edf2;
   border-bottom: 1px solid #d6e4ef;
-  height: 80px;
+  height: 90px;
 }
 
 .nav-overview {
@@ -93,16 +93,21 @@ body {
   padding: 0 40px;
   font-weight: 700;
   font-size: 14px;
-  color: #444;
+  color: var(--ocean);
   border-right: 1px solid #d6e4ef;
-  border-top: 4px solid transparent;
   cursor: pointer;
   text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nav-overview:hover {
+  background: var(--ocean);
+  color: white;
 }
 
 .nav-overview.active {
-  color: var(--ocean);
-  border-top-color: var(--ocean);
+  background: var(--ocean);
+  color: white;
 }
 
 .nav-groups {
@@ -137,18 +142,22 @@ body {
 
 .link-row a {
   text-decoration: none;
-  color: #444;
+  color: var(--ocean);
   font-size: 14px;
-  font-weight: 500;
-  transition: color 0.2s;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
 
 .link-row a:hover {
-  color: var(--ocean);
+  background: var(--ocean);
+  color: white;
 }
 
 .link-row a.active {
-  color: var(--ocean);
+  background: var(--ocean);
+  color: white;
   font-weight: 700;
 }
 
@@ -226,7 +235,7 @@ body {
 }
 
 .card-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -339,7 +348,7 @@ body {
 .chart-header { margin-bottom: 1.5rem; }
 
 .chart-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -778,7 +787,7 @@ body {
   border-radius: 50%;
   background: var(--navy);
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-weight: 400;
   font-size: 1.1rem;
 }
@@ -885,7 +894,7 @@ body {
 }
 
 .feedback-box h3 {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 }

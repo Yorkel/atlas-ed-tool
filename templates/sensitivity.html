@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% set active = "sensitivity" %}
 
-{% block title %}AtlasED — Model Sensitivity{% endblock %}
+{% block title %}AtlasED - Model Sensitivity{% endblock %}
 
 {% block body %}
 <h1 class="page-title">How Many Topics Should We Look For?</h1>
 <p class="page-desc">
     The main model uses 30 topics. But what if we asked for fewer? Here you can compare what the
-    model finds with 5, 15, or 30 topics — same data, same method, different level of detail.
+    model finds with 5, 15, or 30 topics - same data, same method, different level of detail.
 </p>
 
 <div class="callout callout-info">
     <span class="callout-label">How to read this</span>
     Topics that appear in <strong>both</strong> models share the same colour. Grey topics exist in
-    only one — they appeared or disappeared when the number of topics changed.
+    only one - they appeared or disappeared when the number of topics changed.
 </div>
 
 <!-- Model selectors -->
@@ -69,13 +69,13 @@
 
 <div class="callout callout-warning">
     <span class="callout-label">The Core Finding</span>
-    <strong>k is a volume knob for minority sources</strong> — as k increases, smaller voices
+    <strong>k is a volume knob for minority sources</strong> - as k increases, smaller voices
     (FFT, EPI, Nuffield) become audible in topics shaped for them.
 </div>
 
 <div class="callout callout-info" style="margin-top:2rem;">
     <span class="callout-label">What's Next</span>
-    This page changed the number of topics. On the next page, we change the data itself —
+    This page changed the number of topics. On the next page, we change the data itself -
     removing all media articles to see how that shifts what the model finds.
 </div>
 {% endblock %}

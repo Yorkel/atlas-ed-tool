@@ -14,7 +14,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
@@ -47,7 +47,7 @@
             <div class="nav-column">
                 <span class="group-title">Question the Choices</span>
                 <div class="link-row">
-                    <a href="/sensitivity" class="{% if active == 'sensitivity' %}active{% endif %}">Change the Model</a>
+                    <a href="/sensitivity" class="{% if active == 'sensitivity' %}active{% endif %}">Swap the Model</a>
                     <a href="/ask" class="{% if active == 'ask' %}active{% endif %}">Ask the Data</a>
                 </div>
             </div>
@@ -64,7 +64,7 @@
 
 <!-- Prototype Banner -->
 <div class="prototype-banner">
-    <strong>Research prototype</strong> — built for workshops with policymakers and stakeholders.
+    <strong>Prototype:</strong> This dashboard is in active development. Data and features will be refined through workshops with end users.
 </div>
 
 <!-- Main Content -->
@@ -79,7 +79,7 @@
 <div id="feedbackModal" class="feedback-modal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
     <div class="feedback-box">
         <h3>Share Your Feedback</h3>
-        <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">Anonymous — your feedback helps improve this tool.</p>
+        <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">Anonymous - your feedback helps improve this tool.</p>
         <textarea id="feedbackMsg" placeholder="What did you think? What could be improved?" rows="4"></textarea>
         <div style="display:flex;gap:0.75rem;margin-top:1rem;">
             <button class="feedback-submit" onclick="submitFeedback()">Send</button>
@@ -124,7 +124,7 @@ async function submitFeedback() {
 </script>
 
 <script>
-Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.family = "'Source Serif 4', Georgia, serif";
 Chart.defaults.font.size = 13;
 Chart.defaults.color = '#6B7280';
 </script>
