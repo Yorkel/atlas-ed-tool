@@ -20,16 +20,16 @@ body {
   font-family: 'Source Serif 4', Georgia, serif;
   background: var(--bg);
   color: #1a1a1a;
-  line-height: 1.65;
-  font-size: 16px;
+  line-height: 1.7;
+  font-size: 17px;
 }
 
 /* ── Header ───────────────────────────────────────────────────────── */
 .header {
   background: var(--navy);
   color: white;
-  padding: 20px 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  padding: 8px 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 100;
 }
 
@@ -77,9 +77,8 @@ body {
 }
 
 .nav-container {
-  background: #dce4ed;
-  border-top: 1px solid #c8d4e0;
-  border-bottom: 2px solid #c8d4e0;
+  background: #f0f1f3;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: center;
 }
@@ -103,11 +102,12 @@ body {
 .nav-column:last-child { border-right: none; }
 
 .group-title {
-  font-size: 9px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #888;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   font-weight: 500;
 }
 
@@ -117,10 +117,11 @@ body {
 }
 
 .link-row a {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   text-decoration: none;
-  color: var(--ocean);
-  font-size: 12px;
-  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
   padding: 3px 8px;
   border-radius: 4px;
   transition: all 0.2s;
@@ -163,7 +164,7 @@ body {
 }
 
 .page-title {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 0.75rem;
@@ -236,11 +237,10 @@ body {
 }
 
 .stat-card {
-  background: white;
-  border: 1px solid #d6e4ef;
-  border-top: 3px solid var(--ocean);
-  border-radius: 6px;
-  padding: 1.25rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px 16px;
   transition: all 0.2s;
   text-align: center;
   display: flex;
@@ -255,18 +255,20 @@ body {
 }
 
 .stat-value {
-  font-size: 26px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--navy);
+  color: #1a5276;
 }
 
 .stat-label {
-  font-size: 10px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
   font-weight: 600;
   color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   margin-bottom: 0.35rem;
   line-height: 1.4;
 }
@@ -879,6 +881,7 @@ body {
 
 /* ── Prototype Banner ──────────────────────────────────────────────── */
 .prototype-banner {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #fef3cd;
   color: #856404;
   text-align: center;
