@@ -89,13 +89,15 @@ async def ask_the_data(request: Request):
         if r["question"] in questions:
             questions[r["question"]]["no_media"] = r
 
+    # Convert to ordered list so dropdown and JS stay in sync
+    question_list = [
+        {"question": q, "full": v.get("full", {}), "no_media": v.get("no_media", {})}
+        for q, v in questions.items()
+    ]
+
     return templates.TemplateResponse("ask.html", {
         "request": request,
-        "topics_full": topics_full,
-        "topics_nm": topics_nm,
-        "model_full": model_full or {"n_articles": 3943},
-        "model_nm": model_nm or {"n_articles": 1198},
-        "questions": questions,
+        "question_list": question_list,
     })
 
 

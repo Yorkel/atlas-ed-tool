@@ -4,12 +4,15 @@
 {% block title %}AtlasED - Ask the Data{% endblock %}
 
 {% block body %}
-<h1 class="page-title">Ask the Data</h1>
+<h1 class="page-title">What Changes When the Data Changes?</h1>
+<p class="page-desc">
+    Ask a question about education policy and see how the answer changes depending on the dataset used. The left panel draws on the full dataset including media coverage. The right panel uses the same model but with all media removed - only government, think tank, and professional body publications remain.
+</p>
 
 <div class="rag-input-container">
     <select class="rag-select" id="questionSelect" onchange="showQuestion(this.value)">
-        {% for q in questions %}
-        <option value="{{ loop.index0 }}">{{ q }}</option>
+        {% for q in question_list %}
+        <option value="{{ loop.index0 }}">{{ q.question }}</option>
         {% endfor %}
     </select>
 </div>
@@ -31,6 +34,16 @@
     </div>
 </div>
 
+<div class="callout callout-warning" style="margin-top:2rem;">
+    <span class="callout-label">Core Finding</span>
+    The same question produces different answers depending on which documents the AI uses. With media included, the focus is on crises - funding, Ofsted, strikes. Without it, the focus shifts to structural issues - SEND, system fragmentation, post-16 barriers. Both are valid, but neither is complete. The difference comes from which voices are included.
+</div>
+
+<div class="callout callout-critical">
+    <span class="callout-label">Core Insight</span>
+    Media connects different parts of the system but also frames issues as crises. Without it, perspectives fragment but reveal deeper structural problems. The question isn't which version is right, but which one is shaping decisions - and whether decision-makers know.
+</div>
+
 <a href="/responsible-ai" style="text-decoration:none;display:block;">
     <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
         <span class="callout-label">What's Next &rarr;</span>
@@ -42,11 +55,10 @@
 {% block scripts %}
 <script>
 // ── RAG section ──────────────────────────────────────────────────────
-const questions = {{ questions | tojson }};
-const qKeys = Object.keys(questions);
+const questions = {{ question_list | tojson }};
 
 function showQuestion(idx) {
-    const q = questions[qKeys[idx]];
+    const q = questions[idx];
     const full = q.full || {};
     const nm = q.no_media || {};
 

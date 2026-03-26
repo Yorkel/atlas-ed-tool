@@ -30,30 +30,29 @@
     <p>
         The model used here is deliberately simple - because every choice is visible. The number of topics, the data sources, the text processing: change any one and watch the findings shift. In more complex AI systems, those same choices still exist but are harder to see - making it even more important to test whether results would change if the system were built differently.
     </p>
-</div>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
-        <div class="stat-label">Total Documents Analysed</div>
-    </div>
-    <div class="stat-card">
-        {% if stats.date_min and stats.date_max %}
-        <div class="stat-value">{{ stats.date_min[0:4] }} – {{ stats.date_max[0:4] }}</div>
-        {% endif %}
-        <div class="stat-label">Time Period</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
-        <div class="stat-label">Policy Topics Identified</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
-        <div class="stat-label">Data Sources</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ "%.0f" | format((stats.stability | default(0) | float) * 100) }}%</div>
-        <div class="stat-label">Model Stability</div>
+    <div class="stats-grid" style="margin-bottom:0;">
+        <div class="stat-card">
+            <div class="stat-value">{{ "{:,}".format(stats.n_articles | default(0)) }}</div>
+            <div class="stat-label">Total Documents Analysed</div>
+        </div>
+        <div class="stat-card">
+            {% if stats.date_min and stats.date_max %}
+            <div class="stat-value">{{ stats.date_min[0:4] }} – {{ stats.date_max[0:4] }}</div>
+            {% endif %}
+            <div class="stat-label">Time Period</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.n_topics | default(0) }}</div>
+            <div class="stat-label">Policy Topics Identified</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.n_sources | default(0) }}</div>
+            <div class="stat-label">Data Sources</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ "%.0f" | format((stats.stability | default(0) | float) * 100) }}%</div>
+            <div class="stat-label">Model Stability</div>
+        </div>
     </div>
 </div>
 

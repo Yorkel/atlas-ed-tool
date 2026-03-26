@@ -307,6 +307,34 @@ body {
 }
 
 .callout-info .callout-label { color: var(--ocean); }
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.benefits-grid .callout {
+  margin: 0;
+  border-left: none;
+  border-top: 4px solid;
+  border-radius: 8px;
+}
+
+@media (max-width: 968px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+
+.callout-next {
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+  border-left: none;
+  border-top: 2px solid var(--ocean);
+  border-radius: 8px;
+  background: rgba(3, 105, 161, 0.03);
+}
 .callout-warning .callout-label { color: var(--amber); }
 .callout-critical .callout-label { color: var(--rust); }
 
