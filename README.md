@@ -4,7 +4,7 @@
 
 UCL Institute of Education | 2026
 
-Built as part of a Level 7 AI Engineering Apprenticeship. Originally developed as an independent strand of the ESRC Education Research Programme. Cross-jurisdictional expansion funded by a UCL Grand Challenges Inequality Catalyst Grant.
+Built as part of a Level 6 AI Engineering Apprenticeship. Originally developed as an independent strand of the ESRC Education Research Programme. Cross-jurisdictional expansion funded by a UCL Grand Challenges Inequality Catalyst Grant.
 
 ---
 
