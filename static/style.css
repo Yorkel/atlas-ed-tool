@@ -343,30 +343,25 @@ body {
 .next-page-btn {
   display: block;
   margin: 2rem 0;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   background: var(--ocean);
   color: white;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
+  text-align: center;
   transition: background 0.2s;
 }
 .next-page-btn:hover {
   background: #025e8c;
 }
 .next-page-btn .next-label {
-  font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  display: block;
-  margin-bottom: 0.25rem;
-  opacity: 0.85;
+  margin-right: 0.5rem;
 }
 .next-page-btn .next-desc {
   font-weight: 400;
-  font-size: 0.9rem;
   opacity: 0.9;
 }
 
