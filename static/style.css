@@ -339,6 +339,37 @@ body {
 .callout-warning .callout-label { color: var(--amber); }
 .callout-critical .callout-label { color: var(--rust); }
 
+/* ── Next Page Button ────────────────────────────────────────────── */
+.next-page-btn {
+  display: block;
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--ocean);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.next-page-btn:hover {
+  background: #025e8c;
+}
+.next-page-btn .next-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 0.25rem;
+  opacity: 0.85;
+}
+.next-page-btn .next-desc {
+  font-weight: 400;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
 /* ── Chart Container ──────────────────────────────────────────────── */
 .chart-container {
   background: var(--surface);

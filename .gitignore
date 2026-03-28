@@ -4,6 +4,9 @@ docs/
 # Dashboard screenshots
 dashboard_28.3.2026/
 
+# Dashboard export data
+dashboard_export/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

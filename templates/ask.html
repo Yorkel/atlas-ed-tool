@@ -34,42 +34,25 @@
     </div>
 </div>
 
-<div class="callout callout-warning" style="margin-top:2rem;">
+<h2 class="section-title" style="margin-top:2.5rem;">What This Means</h2>
+
+<div class="callout callout-warning">
     <span class="callout-label">Core Finding</span>
-    The same question produces different answers depending on which documents the AI uses. With media included, the focus is on crises - funding, Ofsted, strikes. Without it, the focus shifts to structural issues - SEND, system fragmentation, post-16 barriers. Both are valid, but neither is complete. The difference comes from which voices are included.
+    The same question produces different answers depending on which documents the AI uses. With media included, the focus is on crises — funding, Ofsted, strikes. Without it, the focus shifts to structural issues — SEND, system fragmentation, post-16 barriers. Both are valid, but neither is complete. Removing media changed 93% of topics the model found — same model, same settings. One source, Schools Week, accounts for roughly 70% of the dataset, and nine of thirty topics are more than 90% from a single source. At that point, the model is discovering who publishes most — not what the policy landscape actually contains.
 </div>
 
 <div class="callout callout-critical">
     <span class="callout-label">Core Insight</span>
-    Media connects different parts of the system but also frames issues as crises. Without it, perspectives fragment but reveal deeper structural problems. The question isn't which version is right, but which one is shaping decisions - and whether decision-makers know.
-</div>
-
-<h2 class="section-title" style="margin-top:2.5rem;">What This Means</h2>
-
-<div class="callout callout-warning">
-    <span class="callout-label">93% of topics changed</span>
-    Removing media articles — same model, same settings — changed almost every topic the model found. The "education debate" that appears with media is largely shaped by one outlet. Without it, a completely different picture emerges: regulatory frameworks, research agendas, and consultation processes that were invisible before.
-</div>
-
-<div class="callout callout-critical">
-    <span class="callout-label">One source dominates</span>
-    Schools Week accounts for roughly 70% of the dataset. Nine of the thirty topics are more than 90% from a single source. When that happens, the model is discovering who publishes most — not what the policy landscape actually contains.
-</div>
-
-<div class="callout callout-info">
-    <span class="callout-label">AI answers depend on what's included</span>
-    The same question asked of the full dataset and the no-media dataset produced different answers with different policy implications. The full-dataset answer was crisis-driven. The no-media answer was structural. Neither was wrong — but users had no way to know the answer would change.
+    Media connects different parts of the system but also frames issues as crises. Without it, perspectives fragment but reveal deeper structural problems — regulatory frameworks, research agendas, and consultation processes that were invisible before. The question isn't which version is right, but which one is shaping decisions — and whether decision-makers know.
 </div>
 
 <p class="page-desc" style="margin-top:1rem;">
-    <a href="https://github.com/Yorkel/atlas-ed-tool/blob/main/dashboard_export/SPECIFICATION_SENSITIVITY_REPORT.md" target="_blank" style="color:var(--ocean);font-weight:600;">Read the full specification sensitivity report &rarr;</a>
+    <a href="https://github.com/Yorkel/atlas-ed-tool/blob/main/outputs/SPECIFICATION_SENSITIVITY_REPORT.md" target="_blank" style="color:var(--ocean);font-weight:600;">Read the full specification sensitivity report &rarr;</a>
 </p>
 
-<a href="/responsible-ai" style="text-decoration:none;display:block;">
-    <div class="callout callout-info" style="margin-top:2rem;cursor:pointer;">
-        <span class="callout-label">What's Next &rarr;</span>
-        What do these findings mean beyond education? Explore why this matters for any organisation using AI.
-    </div>
+<a href="/responsible-ai" class="next-page-btn">
+    <span class="next-label">What's Next &rarr;</span>
+    <span class="next-desc">What do these findings mean beyond education? Explore why this matters for any organisation using AI.</span>
 </a>
 {% endblock %}
 

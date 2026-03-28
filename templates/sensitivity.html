@@ -48,39 +48,25 @@
 </div>
 
 
-<p class="page-desc" style="margin-top:2rem;">
-    The key finding: only 6% of topics remain when moving from a zoomed-in view (30 topics) to a zoomed-out view (5 topics). At a zoomed-out level, issues are grouped together and smaller voices disappear. At a zoomed-in level, more detail appears - but multiple plausible interpretations emerge.
-</p>
-<p class="page-desc">
-    The core insight is that the number of topics acts like a zoom control - smaller voices only become visible as you zoom in. The next page shifts focus by changing the data rather than the model settings.
-</p>
-
 <h2 class="section-title" style="margin-top:2.5rem;">What This Means</h2>
 
 <div class="callout callout-warning">
-    <span class="callout-label">The zoom problem</span>
-    At 5 topics, one group absorbs almost half of all articles — school absence, mental health, free school meals, SEND, and exclusions all get lumped together. At 30 topics, those become separate issues with different trends and different sources driving them. The "zoom level" doesn't just add detail — it changes what counts as a finding.
+    <span class="callout-label">Core Finding</span>
+    Only 6% of topics remain when moving from 30 topics to 5. At 5 topics, one group absorbs almost half of all articles — school absence, mental health, free school meals, SEND, and exclusions all get lumped together. At 30, those become separate issues with different trends and different sources. The "zoom level" doesn't just add detail — it changes what counts as a finding. Specialist organisations like the Fischer Family Trust and Nuffield Foundation are invisible at low resolution. Their perspectives only appear when the model is set to find more topics. Lower resolution systematically silences minority voices.
 </div>
 
 <div class="callout callout-critical">
-    <span class="callout-label">Smaller voices disappear at low resolution</span>
-    Specialist organisations like the Fischer Family Trust and the Nuffield Foundation are invisible when the model looks for only a few topics. Their perspectives only appear when the model is set to find more. Lower resolution systematically silences minority voices.
-</div>
-
-<div class="callout callout-info">
-    <span class="callout-label">Only two topics survived every test</span>
-    Academy trust governance and Ofsted inspection reform appeared no matter how the model was configured. Everything else — the issues a policymaker might act on — changed depending on how many topics the model was asked to find.
+    <span class="callout-label">Core Insight</span>
+    The number of topics acts like a zoom control — smaller voices only become visible as you zoom in. Only two topics survived every test: academy trust governance and Ofsted inspection reform. Everything else — the issues a policymaker might act on — changed depending on how many topics the model was asked to find.
 </div>
 
 <p class="page-desc" style="margin-top:1rem;">
-    <a href="https://github.com/Yorkel/atlas-ed-tool/blob/main/dashboard_export/SPECIFICATION_SENSITIVITY_REPORT.md" target="_blank" style="color:var(--ocean);font-weight:600;">Read the full specification sensitivity report &rarr;</a>
+    <a href="https://github.com/Yorkel/atlas-ed-tool/blob/main/outputs/SPECIFICATION_SENSITIVITY_REPORT.md" target="_blank" style="color:var(--ocean);font-weight:600;">Read the full specification sensitivity report &rarr;</a>
 </p>
 
-<a href="/ask" style="text-decoration:none;display:block;">
-    <div class="callout callout-info" style="margin-top:1rem;cursor:pointer;">
-        <span class="callout-label">What's Next &rarr;</span>
-        On the next page, we change the data itself - removing all media articles to see how that shifts what the model finds.
-    </div>
+<a href="/ask" class="next-page-btn">
+    <span class="next-label">What's Next &rarr;</span>
+    <span class="next-desc">On the next page, we change the data itself - removing all media articles to see how that shifts what the model finds.</span>
 </a>
 {% endblock %}
 
