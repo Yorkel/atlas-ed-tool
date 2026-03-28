@@ -1,6 +1,9 @@
 # Docs (local only)
 docs/
 
+# Dashboard screenshots
+dashboard_28.3.2026/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
