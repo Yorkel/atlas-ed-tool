@@ -1,0 +1,127 @@
+{
+  "model_id": "nmf_eng_5",
+  "n_topics": 5,
+  "n_articles": 3939,
+  "metrics": {
+    "reconstruction_error": 58.2983,
+    "stability": 1.0,
+    "mean_dominant_weight": 0.0896,
+    "max_dominant_weight": 0.2947
+  },
+  "topics": [
+    {
+      "topic_num": 0,
+      "name": "pupil_welfare_and_inclusion",
+      "count": 1938,
+      "pct": 49.2,
+      "top_source": "schoolsweek",
+      "top_source_pct": 0.61,
+      "single_source": false,
+      "top_keywords": [
+        "child",
+        "pupil",
+        "education",
+        "student",
+        "government",
+        "young",
+        "people",
+        "parent",
+        "need",
+        "support"
+      ]
+    },
+    {
+      "topic_num": 1,
+      "name": "academy_financial_oversight",
+      "count": 162,
+      "pct": 4.1,
+      "top_source": "gov",
+      "top_source_pct": 0.99,
+      "single_source": true,
+      "top_keywords": [
+        "late information",
+        "late",
+        "local authority",
+        "authority",
+        "local",
+        "information action",
+        "authority education",
+        "provider html",
+        "information",
+        "action education"
+      ]
+    },
+    {
+      "topic_num": 2,
+      "name": "academy_trust_governance",
+      "count": 740,
+      "pct": 18.8,
+      "top_source": "schoolsweek",
+      "top_source_pct": 0.8,
+      "single_source": false,
+      "top_keywords": [
+        "trust",
+        "academy",
+        "academy trust",
+        "notice",
+        "director",
+        "regional director",
+        "regional",
+        "council",
+        "mat",
+        "dfe"
+      ]
+    },
+    {
+      "topic_num": 3,
+      "name": "teacher_pay_and_workforce",
+      "count": 389,
+      "pct": 9.9,
+      "top_source": "schoolsweek",
+      "top_source_pct": 0.82,
+      "single_source": false,
+      "top_keywords": [
+        "inspection",
+        "inspector",
+        "report",
+        "ofsted",
+        "leader",
+        "judgment",
+        "grade",
+        "watchdog",
+        "card",
+        "report card"
+      ]
+    },
+    {
+      "topic_num": 4,
+      "name": "ofsted_inspection_reform",
+      "count": 710,
+      "pct": 18.0,
+      "top_source": "schoolsweek",
+      "top_source_pct": 0.92,
+      "single_source": true,
+      "top_keywords": [
+        "teacher",
+        "pay",
+        "union",
+        "government",
+        "strike",
+        "member",
+        "recruitment",
+        "leader",
+        "staff",
+        "rise"
+      ]
+    }
+  ],
+  "run_id": "2026-03-24_104906",
+  "run_metadata": {
+    "reconstruction_error": 58.15354457946332,
+    "n_docs": 3943,
+    "tfidf_max_features": null,
+    "tfidf_ngram_range": null,
+    "nmf_init": "nndsvd",
+    "nmf_random_state": 42
+  }
+}

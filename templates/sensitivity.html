@@ -49,7 +49,7 @@
 
 
 <p class="page-desc" style="margin-top:2rem;">
-    The key finding: only 7% of topics remain when moving from a zoomed-in view (30 topics) to a zoomed-out view (5 topics). At a zoomed-out level, issues are grouped together and smaller voices disappear. At a zoomed-in level, more detail appears - but multiple plausible interpretations emerge.
+    The key finding: only 6% of topics remain when moving from a zoomed-in view (30 topics) to a zoomed-out view (5 topics). At a zoomed-out level, issues are grouped together and smaller voices disappear. At a zoomed-in level, more detail appears - but multiple plausible interpretations emerge.
 </p>
 <p class="page-desc">
     The core insight is that the number of topics acts like a zoom control - smaller voices only become visible as you zoom in. The next page shifts focus by changing the data rather than the model settings.
@@ -188,8 +188,8 @@ function updateComparison() {
 
     const colourMap = buildColourMap(topicsA, topicsB);
     const sharedCount = Object.keys(colourMap).length;
-    const maxTopics = Math.max(topicsA.length, topicsB.length);
-    const pct = maxTopics > 0 ? Math.round(sharedCount / maxTopics * 100) : 0;
+    const uniqueNames = new Set([...topicsA.map(t => t.name), ...topicsB.map(t => t.name)]);
+    const pct = uniqueNames.size > 0 ? Math.round(sharedCount / uniqueNames.size * 100) : 0;
 
     document.getElementById("summaryText").innerHTML =
         idA === idB
