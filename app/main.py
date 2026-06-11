@@ -1,6 +1,7 @@
 """AtlasED Dashboard — FastAPI application."""
 
 import json
+import os
 from pathlib import Path
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse
@@ -17,6 +18,23 @@ templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 BASELINE_MODEL = "eng_k30"
 ELECTION_DATE = "2024-07-04"
+
+
+# ── Maintenance mode ──────────────────────────────────────────────────
+# Set the env var MAINTENANCE_MODE=true (in Render) to show an "under
+# redevelopment" page for every request. Unset/false runs the app normally.
+# Read per-request so toggling the env var takes effect without a redeploy.
+def _maintenance_on() -> bool:
+    return os.getenv("MAINTENANCE_MODE", "").strip().lower() in ("1", "true", "yes", "on")
+
+
+@app.middleware("http")
+async def maintenance_gate(request: Request, call_next):
+    if _maintenance_on():
+        return templates.TemplateResponse(
+            "maintenance.html", {"request": request}, status_code=503
+        )
+    return await call_next(request)
 
 
 # ── Page 1: Overview ──────────────────────────────────────────────────
